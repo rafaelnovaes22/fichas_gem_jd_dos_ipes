@@ -1,0 +1,3 @@
+module.exports=[64433,a=>{a.v({className:"inter_5972bc34-module__OU16Qa__className"})},41040,a=>{"use strict";var b=a.i(50331),c=a.i(64433);let d={className:c.default.className,style:{fontFamily:"'Inter', 'Inter Fallback'",fontStyle:"normal"}};function e({children:a}){return(0,b.jsx)("html",{lang:"pt-BR",children:(0,b.jsx)("body",{className:d.className,children:a})})}null!=c.default.variable&&(d.variable=c.default.variable),a.s(["default",()=>e,"metadata",0,{title:"GEM - Gestão de Ensino Musical",description:"Sistema de acompanhamento de alunos de música da Congregação Cristã no Brasil"}],41040)}];
+
+//# sourceMappingURL=%5Broot-of-the-server%5D__766474fc._.js.map
