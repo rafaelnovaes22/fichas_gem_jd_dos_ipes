@@ -104,5 +104,3 @@ Instrutor: instrutor@gem.com.br / admin123
 Este projeto é de uso interno da Congregação Cristã no Brasil.
 
 ---
-
-Desenvolvido com ❤️ para a Comissão Musical
