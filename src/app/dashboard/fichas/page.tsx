@@ -23,9 +23,8 @@ export default async function FichasPage() {
                     fase: true,
                 },
             },
-            _count: {
-                select: { aulas: true, avaliacoes: true },
-            },
+            aulas: { select: { presenca: true } },
+            avaliacoes: { select: { nota: true } },
         },
         orderBy: { updatedAt: "desc" },
     });
@@ -43,7 +42,8 @@ export default async function FichasPage() {
                 id: string;
                 tipoAula: string;
                 apto: boolean | null;
-                _count: { aulas: number; avaliacoes: number };
+                aulasRealizadas: number;
+                avaliacoesRealizadas: number;
             }[];
         }
     >();
@@ -64,7 +64,8 @@ export default async function FichasPage() {
             id: ficha.id,
             tipoAula: ficha.tipoAula,
             apto: ficha.apto,
-            _count: ficha._count,
+            aulasRealizadas: ficha.aulas.filter((a) => a.presenca).length,
+            avaliacoesRealizadas: ficha.avaliacoes.filter((a) => a.nota !== null).length,
         });
     }
 

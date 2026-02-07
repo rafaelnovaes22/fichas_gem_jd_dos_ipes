@@ -45,10 +45,8 @@ interface FichaData {
     id: string;
     tipoAula: string;
     apto: boolean | null;
-    _count: {
-        aulas: number;
-        avaliacoes: number;
-    };
+    aulasRealizadas: number;
+    avaliacoesRealizadas: number;
 }
 
 interface AlunoGroup {
@@ -242,19 +240,9 @@ export function FichasList({ alunosAgrupados }: FichasListProps) {
                                                                     }
                                                                 </p>
                                                                 <p className="text-xs text-gray-500">
-                                                                    {
-                                                                        ficha
-                                                                            ._count
-                                                                            .aulas
-                                                                    }
-                                                                    /20 aulas
+                                                                    {ficha.aulasRealizadas}/20 aulas
                                                                     &nbsp;•&nbsp;
-                                                                    {
-                                                                        ficha
-                                                                            ._count
-                                                                            .avaliacoes
-                                                                    }
-                                                                    /3 aval.
+                                                                    {ficha.avaliacoesRealizadas}/3 aval.
                                                                 </p>
                                                             </div>
                                                             <div>
