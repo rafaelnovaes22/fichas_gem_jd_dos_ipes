@@ -73,42 +73,60 @@ export default async function FichasPage() {
                     </CardContent>
                 </Card>
             ) : (
-                <div className="grid gap-4">
+                <div className="grid gap-3 md:gap-4">
                     {fichas.map((ficha) => (
                         <Link key={ficha.id} href={`/dashboard/fichas/${ficha.id}`}>
                             <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                                <CardContent className="py-4">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                                                <FileText className="w-6 h-6 text-blue-600" />
-                                            </div>
-                                            <div>
-                                                <h3 className="font-semibold text-gray-900">
-                                                    {ficha.aluno.nome}
-                                                </h3>
-                                                <div className="flex items-center gap-2 text-sm text-gray-500">
-                                                    <span>{tipoAulaLabel[ficha.tipoAula]}</span>
-                                                    <span>•</span>
-                                                    <span>{ficha.aluno.instrumento.nome}</span>
-                                                    <span>•</span>
-                                                    <span>{ficha.aluno.fase.nome}</span>
-                                                </div>
-                                            </div>
+                                <CardContent className="p-3 md:p-4">
+                                    <div className="flex items-center gap-3 md:gap-4">
+                                        {/* Avatar - Smaller on mobile */}
+                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                            <FileText className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
                                         </div>
-                                        <div className="flex items-center gap-6">
-                                            <div className="text-right">
-                                                <p className="text-sm text-gray-500">Aulas</p>
-                                                <p className="font-medium">{ficha._count.aulas}/20</p>
+
+                                        {/* Main Info */}
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-semibold text-gray-900 text-sm md:text-base truncate">
+                                                {ficha.aluno.nome}
+                                            </h3>
+                                            <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-xs md:text-sm text-gray-500">
+                                                <span className="truncate max-w-[120px] md:max-w-none">{tipoAulaLabel[ficha.tipoAula]}</span>
+                                                <span className="hidden md:inline">•</span>
+                                                <span className="truncate max-w-[100px] md:max-w-none">{ficha.aluno.instrumento.nome}</span>
+                                                <span className="hidden md:inline">•</span>
+                                                <span className="truncate max-w-[80px] md:max-w-none hidden sm:inline">{ficha.aluno.fase.nome}</span>
                                             </div>
-                                            <div className="text-right">
-                                                <p className="text-sm text-gray-500">Avaliações</p>
-                                                <p className="font-medium">{ficha._count.avaliacoes}/3</p>
+                                            {/* Mobile-only fase */}
+                                            <p className="text-xs text-gray-400 sm:hidden truncate">{ficha.aluno.fase.nome}</p>
+                                        </div>
+
+                                        {/* Stats - Simplified on mobile */}
+                                        <div className="flex items-center gap-2 md:gap-3">
+                                            {/* Mobile: Just show progress numbers */}
+                                            <div className="flex flex-col gap-0.5 text-right sm:hidden">
+                                                <span className="text-xs text-gray-500">
+                                                    {ficha._count.aulas}/20
+                                                </span>
+                                                <span className="text-xs text-gray-500">
+                                                    {ficha._count.avaliacoes}/3
+                                                </span>
                                             </div>
+
+                                            {/* Desktop: Full stats */}
+                                            <div className="hidden sm:block text-right">
+                                                <p className="text-xs md:text-sm text-gray-500">Aulas</p>
+                                                <p className="text-xs md:text-sm font-medium">{ficha._count.aulas}/20</p>
+                                            </div>
+                                            <div className="hidden sm:block text-right">
+                                                <p className="text-xs md:text-sm text-gray-500">Avaliações</p>
+                                                <p className="text-xs md:text-sm font-medium">{ficha._count.avaliacoes}/3</p>
+                                            </div>
+
+                                            {/* Status Badge - Smaller on mobile */}
                                             <div>
                                                 {ficha.apto !== null ? (
                                                     <span
-                                                        className={`px-3 py-1 text-sm font-medium rounded-full ${ficha.apto
+                                                        className={`px-2 py-0.5 md:px-3 md:py-1 text-xs md:text-sm font-medium rounded-full ${ficha.apto
                                                                 ? "bg-green-100 text-green-700"
                                                                 : "bg-red-100 text-red-700"
                                                             }`}
@@ -116,7 +134,7 @@ export default async function FichasPage() {
                                                         {ficha.apto ? "APTO" : "NÃO APTO"}
                                                     </span>
                                                 ) : (
-                                                    <span className="px-3 py-1 text-sm font-medium rounded-full bg-yellow-100 text-yellow-700">
+                                                    <span className="px-2 py-0.5 md:px-3 md:py-1 text-xs md:text-sm font-medium rounded-full bg-yellow-100 text-yellow-700">
                                                         Em andamento
                                                     </span>
                                                 )}

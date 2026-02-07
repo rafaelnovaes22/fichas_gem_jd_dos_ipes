@@ -13,6 +13,7 @@ const alunoSchema = z.object({
     instrutor2Id: z.string().optional(),
     instrumentoId: z.string().min(1),
     faseId: z.string().min(1),
+    faseOrquestra: z.enum(["ENSAIO", "RJM", "CULTO", "TROCA_INSTRUMENTO_CULTO", "TROCA_INSTRUMENTO_OFICIALIZACAO", "OFICIALIZACAO", "OFICIALIZADO"]).default("ENSAIO"),
     autorizacaoDados: z.boolean().default(false),
 });
 
@@ -113,6 +114,7 @@ export async function POST(request: NextRequest) {
                 instrutor2Id: data.instrutor2Id || null,
                 instrumentoId: data.instrumentoId,
                 faseId: data.faseId,
+                faseOrquestra: data.faseOrquestra,
                 autorizacaoDados: data.autorizacaoDados,
             },
             include: {

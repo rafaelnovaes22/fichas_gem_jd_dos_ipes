@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -128,31 +129,53 @@ export function FichaForm({
     const handleSaveAula = async (numeroAula: number, data: Partial<Aula> & { topicoMsaId?: string | null }) => {
         setSaving(true);
         try {
-            await fetch(`/api/fichas/${fichaId}/aulas`, {
+            const response = await fetch(`/api/fichas/${fichaId}/aulas`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ numeroAula, ...data, instrutorId }),
             });
+
+            if (!response.ok) {
+                throw new Error("Erro ao salvar aula");
+            }
+
             // Atualizar estado local em vez de recarregar
             setAulasEditadas(prev => ({ ...prev, [numeroAula]: { ...prev[numeroAula], ...data } }));
+            toast.success(`Aula ${numeroAula} salva com sucesso!`);
         } catch (error) {
             console.error("Erro ao salvar aula:", error);
+            toast.error("Erro ao salvar aula. Tente novamente.");
         } finally {
             setSaving(false);
         }
     };
 
     const handleSaveAvaliacao = async (numeroAvaliacao: number, data: Partial<Avaliacao>) => {
+        // Validar nota (0-10)
+        if (data.nota !== undefined && data.nota !== null) {
+            if (data.nota < 0 || data.nota > 10) {
+                toast.error("A nota deve estar entre 0 e 10");
+                return;
+            }
+        }
+
         setSaving(true);
         try {
-            await fetch(`/api/fichas/${fichaId}/avaliacoes`, {
+            const response = await fetch(`/api/fichas/${fichaId}/avaliacoes`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ numeroAvaliacao, ...data }),
             });
+
+            if (!response.ok) {
+                throw new Error("Erro ao salvar avaliação");
+            }
+
             setAvaliacoesEditadas(prev => ({ ...prev, [numeroAvaliacao]: { ...prev[numeroAvaliacao], ...data } }));
+            toast.success(`Avaliação ${numeroAvaliacao} salva com sucesso!`);
         } catch (error) {
             console.error("Erro ao salvar avaliação:", error);
+            toast.error("Erro ao salvar avaliação. Tente novamente.");
         } finally {
             setSaving(false);
         }
@@ -310,7 +333,13 @@ export function FichaForm({
                                                 <input
                                                     type="checkbox"
                                                     checked={aulaData.presenca}
-                                                    onChange={(e) => handleSaveAula(aula.numeroAula, { presenca: e.target.checked })}
+                                                    onChange={(e) => {
+                                                        const isPresent = e.target.checked;
+                                                        handleSaveAula(aula.numeroAula, {
+                                                            presenca: isPresent,
+                                                            ausencia: isPresent ? false : aulaData.ausencia
+                                                        });
+                                                    }}
                                                     className="h-4 w-4"
                                                 />
                                             </td>
@@ -318,7 +347,13 @@ export function FichaForm({
                                                 <input
                                                     type="checkbox"
                                                     checked={aulaData.ausencia}
-                                                    onChange={(e) => handleSaveAula(aula.numeroAula, { ausencia: e.target.checked })}
+                                                    onChange={(e) => {
+                                                        const isAbsent = e.target.checked;
+                                                        handleSaveAula(aula.numeroAula, {
+                                                            ausencia: isAbsent,
+                                                            presenca: isAbsent ? false : aulaData.presenca
+                                                        });
+                                                    }}
                                                     className="h-4 w-4"
                                                 />
                                             </td>
@@ -346,7 +381,12 @@ export function FichaForm({
                                                         size="sm"
                                                         variant="outline"
                                                         className="h-6 text-[10px] px-2"
-                                                        onClick={() => handleSaveAula(aula.numeroAula, { vistoInstrutor: true })}
+                                                        onClick={() => {
+                                                            if (!aulaData.data) {
+                                                                toast.warning("É recomendável preencher a data antes de assinar.");
+                                                            }
+                                                            handleSaveAula(aula.numeroAula, { vistoInstrutor: true });
+                                                        }}
                                                     >
                                                         Assinar
                                                     </Button>
@@ -436,7 +476,13 @@ export function FichaForm({
                                         <Checkbox
                                             id={`presenca-${aula.numeroAula}`}
                                             checked={aulaData.presenca}
-                                            onCheckedChange={(checked) => handleSaveAula(aula.numeroAula, { presenca: checked === true })}
+                                            onCheckedChange={(checked) => {
+                                                const isPresent = checked === true;
+                                                handleSaveAula(aula.numeroAula, {
+                                                    presenca: isPresent,
+                                                    ausencia: isPresent ? false : aulaData.ausencia
+                                                });
+                                            }}
                                         />
                                         <Label htmlFor={`presenca-${aula.numeroAula}`} className="text-sm font-medium cursor-pointer">
                                             Presente
@@ -446,7 +492,13 @@ export function FichaForm({
                                         <Checkbox
                                             id={`ausencia-${aula.numeroAula}`}
                                             checked={aulaData.ausencia}
-                                            onCheckedChange={(checked) => handleSaveAula(aula.numeroAula, { ausencia: checked === true })}
+                                            onCheckedChange={(checked) => {
+                                                const isAbsent = checked === true;
+                                                handleSaveAula(aula.numeroAula, {
+                                                    ausencia: isAbsent,
+                                                    presenca: isAbsent ? false : aulaData.presenca
+                                                });
+                                            }}
                                         />
                                         <Label htmlFor={`ausencia-${aula.numeroAula}`} className="text-sm font-medium cursor-pointer">
                                             Ausente
@@ -479,7 +531,12 @@ export function FichaForm({
                                 {/* Botão Assinar */}
                                 {!aulaData.vistoInstrutor && (
                                     <Button
-                                        onClick={() => handleSaveAula(aula.numeroAula, { vistoInstrutor: true })}
+                                        onClick={() => {
+                                            if (!aulaData.data) {
+                                                toast.warning("É recomendável preencher a data antes de assinar.");
+                                            }
+                                            handleSaveAula(aula.numeroAula, { vistoInstrutor: true });
+                                        }}
                                         className="w-full h-12 text-base"
                                         variant={aulaData.presenca || aulaData.ausencia ? "default" : "outline"}
                                         disabled={!aulaData.presenca && !aulaData.ausencia}
@@ -552,7 +609,14 @@ export function FichaForm({
                                                     max="10"
                                                     step="0.5"
                                                     value={avalData.nota || ""}
-                                                    onChange={(e) => handleSaveAvaliacao(aval.numeroAvaliacao, { nota: e.target.value ? parseFloat(e.target.value) : null })}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value ? parseFloat(e.target.value) : null;
+                                                        if (value !== null && (value < 0 || value > 10)) {
+                                                            toast.error("A nota deve estar entre 0 e 10");
+                                                            return;
+                                                        }
+                                                        handleSaveAvaliacao(aval.numeroAvaliacao, { nota: value });
+                                                    }}
                                                     className="w-16 px-2 py-1 border rounded text-sm"
                                                 />
                                             </td>
@@ -569,7 +633,13 @@ export function FichaForm({
                                                 <input
                                                     type="checkbox"
                                                     checked={avalData.presenca}
-                                                    onChange={(e) => handleSaveAvaliacao(aval.numeroAvaliacao, { presenca: e.target.checked })}
+                                                    onChange={(e) => {
+                                                        const isPresent = e.target.checked;
+                                                        handleSaveAvaliacao(aval.numeroAvaliacao, {
+                                                            presenca: isPresent,
+                                                            ausencia: isPresent ? false : avalData.ausencia
+                                                        });
+                                                    }}
                                                     className="h-4 w-4"
                                                 />
                                             </td>
@@ -577,7 +647,13 @@ export function FichaForm({
                                                 <input
                                                     type="checkbox"
                                                     checked={avalData.ausencia}
-                                                    onChange={(e) => handleSaveAvaliacao(aval.numeroAvaliacao, { ausencia: e.target.checked })}
+                                                    onChange={(e) => {
+                                                        const isAbsent = e.target.checked;
+                                                        handleSaveAvaliacao(aval.numeroAvaliacao, {
+                                                            ausencia: isAbsent,
+                                                            presenca: isAbsent ? false : avalData.presenca
+                                                        });
+                                                    }}
                                                     className="h-4 w-4"
                                                 />
                                             </td>
@@ -666,7 +742,14 @@ export function FichaForm({
                                                 max="10"
                                                 step="0.5"
                                                 value={avalData.nota || ""}
-                                                onChange={(e) => handleSaveAvaliacao(aval.numeroAvaliacao, { nota: e.target.value ? parseFloat(e.target.value) : null })}
+                                                onChange={(e) => {
+                                                    const value = e.target.value ? parseFloat(e.target.value) : null;
+                                                    if (value !== null && (value < 0 || value > 10)) {
+                                                        toast.error("A nota deve estar entre 0 e 10");
+                                                        return;
+                                                    }
+                                                    handleSaveAvaliacao(aval.numeroAvaliacao, { nota: value });
+                                                }}
                                                 className="h-11 text-lg font-bold text-center w-24"
                                                 placeholder="-"
                                             />
@@ -698,7 +781,13 @@ export function FichaForm({
                                             <Checkbox
                                                 id={`aval-presenca-${aval.numeroAvaliacao}`}
                                                 checked={avalData.presenca}
-                                                onCheckedChange={(checked) => handleSaveAvaliacao(aval.numeroAvaliacao, { presenca: checked === true })}
+                                                onCheckedChange={(checked) => {
+                                                    const isPresent = checked === true;
+                                                    handleSaveAvaliacao(aval.numeroAvaliacao, {
+                                                        presenca: isPresent,
+                                                        ausencia: isPresent ? false : avalData.ausencia
+                                                    });
+                                                }}
                                             />
                                             <Label htmlFor={`aval-presenca-${aval.numeroAvaliacao}`} className="text-sm font-medium cursor-pointer">
                                                 Presente
@@ -708,7 +797,13 @@ export function FichaForm({
                                             <Checkbox
                                                 id={`aval-ausencia-${aval.numeroAvaliacao}`}
                                                 checked={avalData.ausencia}
-                                                onCheckedChange={(checked) => handleSaveAvaliacao(aval.numeroAvaliacao, { ausencia: checked === true })}
+                                                onCheckedChange={(checked) => {
+                                                    const isAbsent = checked === true;
+                                                    handleSaveAvaliacao(aval.numeroAvaliacao, {
+                                                        ausencia: isAbsent,
+                                                        presenca: isAbsent ? false : avalData.presenca
+                                                    });
+                                                }}
                                             />
                                             <Label htmlFor={`aval-ausencia-${aval.numeroAvaliacao}`} className="text-sm font-medium cursor-pointer">
                                                 Ausente

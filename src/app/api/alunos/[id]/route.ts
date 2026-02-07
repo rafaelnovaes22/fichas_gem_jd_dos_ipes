@@ -12,6 +12,7 @@ const alunoUpdateSchema = z.object({
     congregacao: z.string().min(1).optional(),
     instrumentoId: z.string().min(1).optional(),
     faseId: z.string().min(1).optional(),
+    faseOrquestra: z.enum(["ENSAIO", "RJM", "CULTO", "TROCA_INSTRUMENTO_CULTO", "TROCA_INSTRUMENTO_OFICIALIZACAO", "OFICIALIZACAO", "OFICIALIZADO"]).optional(),
     instrutor2Id: z.string().optional().nullable().or(z.literal("")).transform(v => v === "" ? null : v),
     autorizacaoDados: z.boolean().optional(),
     ativo: z.boolean().optional(),

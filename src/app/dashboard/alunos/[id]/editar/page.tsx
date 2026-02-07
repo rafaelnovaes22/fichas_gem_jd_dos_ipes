@@ -59,6 +59,7 @@ export default async function EditarAlunoPage({ params }: EditarAlunoPageProps) 
                 congregacao: aluno.congregacao,
                 instrumentoId: aluno.instrumentoId,
                 faseId: aluno.faseId,
+                faseOrquestra: aluno.faseOrquestra,
                 autorizacaoDados: aluno.autorizacaoDados,
                 instrutorId: aluno.instrutor.id,
                 instrutor2Id: aluno.instrutor2?.id || null,

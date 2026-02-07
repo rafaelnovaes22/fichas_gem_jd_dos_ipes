@@ -34,6 +34,16 @@ enum Justificativa {
   OUTROS
 }
 
+enum FaseOrquestra {
+  ENSAIO
+  RJM
+  CULTO
+  TROCA_INSTRUMENTO_CULTO
+  TROCA_INSTRUMENTO_OFICIALIZACAO
+  OFICIALIZACAO
+  OFICIALIZADO
+}
+
 // ==========================================
 // MODELOS
 // ==========================================
@@ -140,6 +150,8 @@ model Aluno {
 
   faseId String
   fase   Fase   @relation(fields: [faseId], references: [id])
+
+  faseOrquestra FaseOrquestra @default(ENSAIO)
 
   autorizacaoDados Boolean @default(false)
   ativo            Boolean @default(true)

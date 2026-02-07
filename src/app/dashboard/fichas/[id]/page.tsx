@@ -5,8 +5,9 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Printer, BookOpen, GraduationCap, Music, FileText, ChevronRight } from "lucide-react";
+import { ArrowLeft, BookOpen, GraduationCap, Music, FileText, ChevronRight } from "lucide-react";
 import { FichaForm } from "./ficha-form";
+import { FichaPDFButton } from "@/components/pdf";
 
 interface FichaPageProps {
     params: Promise<{ id: string }>;
@@ -29,13 +30,17 @@ export default async function FichaPage({ params }: FichaPageProps) {
             aluno: {
                 include: {
                     instrutor: { include: { usuario: true } },
+                    instrutor2: { include: { usuario: true } },
                     instrumento: true,
                     fase: true,
                 },
             },
             aulas: {
                 orderBy: { numeroAula: "asc" },
-                include: { instrutor: { include: { usuario: true } } },
+                include: {
+                    instrutor: { include: { usuario: true } },
+                    topicoMsa: { include: { fase: true } },
+                },
             },
             avaliacoes: {
                 orderBy: { numeroAvaliacao: "asc" },
@@ -101,12 +106,11 @@ export default async function FichaPage({ params }: FichaPageProps) {
                         </p>
                     </div>
                 </div>
-                <div className="flex gap-2">
-                    <Button variant="outline">
-                        <Printer className="w-4 h-4 mr-2" />
-                        Imprimir PDF
-                    </Button>
-                </div>
+                <FichaPDFButton
+                    ficha={ficha}
+                    aulas={ficha.aulas}
+                    avaliacoes={ficha.avaliacoes}
+                />
             </div>
 
             {/* Seletor de Fichas - Cards Responsivos */}

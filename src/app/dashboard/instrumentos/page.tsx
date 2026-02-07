@@ -98,7 +98,8 @@ export default async function InstrumentosPage() {
                         <CardTitle className="text-lg">{categoria}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="overflow-x-auto">
+                        {/* Desktop: Table */}
+                        <div className="hidden md:block overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="border-b">
@@ -126,7 +127,7 @@ export default async function InstrumentosPage() {
                                             </td>
                                             <td className="py-2 px-3 text-right">
                                                 <Link href={`/dashboard/instrumentos/${inst.id}`}>
-                                                    <Button variant="ghost" size="sm">
+                                                    <Button variant="ghost" size="sm" className="h-10 w-10 md:h-8 md:w-8">
                                                         <Edit className="w-4 h-4" />
                                                     </Button>
                                                 </Link>
@@ -135,6 +136,37 @@ export default async function InstrumentosPage() {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile: Cards */}
+                        <div className="md:hidden space-y-3">
+                            {insts.map((inst) => (
+                                <Link key={inst.id} href={`/dashboard/instrumentos/${inst.id}`}>
+                                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                                <Music className="w-5 h-5 text-blue-600" />
+                                            </div>
+                                            <div>
+                                                <p className="font-medium text-gray-900">{inst.nome}</p>
+                                                <p className="text-xs text-gray-500">{inst._count.alunos} aluno{inst._count.alunos !== 1 ? 's' : ''}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            {inst.ativo ? (
+                                                <span className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">
+                                                    Ativo
+                                                </span>
+                                            ) : (
+                                                <span className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full">
+                                                    Inativo
+                                                </span>
+                                            )}
+                                            <Edit className="w-4 h-4 text-gray-400" />
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
                         </div>
                     </CardContent>
                 </Card>

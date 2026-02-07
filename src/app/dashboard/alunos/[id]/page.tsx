@@ -46,6 +46,16 @@ export default async function AlunoPage({ params }: AlunoPageProps) {
         return new Date(date).toLocaleDateString("pt-BR");
     };
 
+    const faseOrquestraLabels: Record<string, string> = {
+        ENSAIO: "Ensaio",
+        RJM: "RJM",
+        CULTO: "Culto",
+        TROCA_INSTRUMENTO_CULTO: "Troca de Instrumento - Culto",
+        TROCA_INSTRUMENTO_OFICIALIZACAO: "Troca de Instrumento - Oficialização",
+        OFICIALIZACAO: "Oficialização",
+        OFICIALIZADO: "Oficializado",
+    };
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -116,8 +126,12 @@ export default async function AlunoPage({ params }: AlunoPageProps) {
                             <p className="font-medium">{aluno.instrumento.nome}</p>
                         </div>
                         <div>
-                            <p className="text-sm text-gray-500">Fase</p>
+                            <p className="text-sm text-gray-500">Fase MSA</p>
                             <p className="font-medium">{aluno.fase.nome}</p>
+                        </div>
+                        <div>
+                            <p className="text-sm text-gray-500">Fase na Orquestra</p>
+                            <p className="font-medium text-blue-600">{faseOrquestraLabels[aluno.faseOrquestra] || aluno.faseOrquestra}</p>
                         </div>
                         <div>
                             <p className="text-sm text-gray-500">Congregação</p>

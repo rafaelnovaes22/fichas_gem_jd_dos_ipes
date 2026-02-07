@@ -12,6 +12,16 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
+const faseOrquestraOptions = [
+    { value: "ENSAIO", label: "Ensaio" },
+    { value: "RJM", label: "RJM" },
+    { value: "CULTO", label: "Culto" },
+    { value: "TROCA_INSTRUMENTO_CULTO", label: "Troca de Instrumento - Culto" },
+    { value: "TROCA_INSTRUMENTO_OFICIALIZACAO", label: "Troca de Instrumento - Oficialização" },
+    { value: "OFICIALIZACAO", label: "Oficialização" },
+    { value: "OFICIALIZADO", label: "Oficializado" },
+] as const;
+
 const alunoSchema = z.object({
     nome: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
     dataNascimento: z.string().optional(),
@@ -20,6 +30,7 @@ const alunoSchema = z.object({
     congregacao: z.string().min(1, "Congregação é obrigatória"),
     instrumentoId: z.string().min(1, "Selecione um instrumento"),
     faseId: z.string().min(1, "Selecione uma fase"),
+    faseOrquestra: z.enum(["ENSAIO", "RJM", "CULTO", "TROCA_INSTRUMENTO_CULTO", "TROCA_INSTRUMENTO_OFICIALIZACAO", "OFICIALIZACAO", "OFICIALIZADO"]),
     instrutor2Id: z.string().optional().nullable(),
     autorizacaoDados: z.boolean(),
 });
@@ -35,6 +46,7 @@ interface Aluno {
     congregacao: string;
     instrumentoId: string;
     faseId: string;
+    faseOrquestra: string;
     instrutorId: string;
     instrutor2Id: string | null;
     autorizacaoDados: boolean;
@@ -67,6 +79,7 @@ export function EditarAlunoForm({ aluno, instrumentos, fases, instrutores }: Edi
             congregacao: aluno.congregacao,
             instrumentoId: aluno.instrumentoId,
             faseId: aluno.faseId,
+            faseOrquestra: aluno.faseOrquestra as any,
             instrutor2Id: aluno.instrutor2Id,
             autorizacaoDados: aluno.autorizacaoDados,
         },
@@ -229,7 +242,7 @@ export function EditarAlunoForm({ aluno, instrumentos, fases, instrutores }: Edi
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="faseId">Fase *</Label>
+                                <Label htmlFor="faseId">Fase MSA *</Label>
                                 <select
                                     id="faseId"
                                     {...register("faseId")}
@@ -244,6 +257,24 @@ export function EditarAlunoForm({ aluno, instrumentos, fases, instrutores }: Edi
                                 </select>
                                 {errors.faseId && (
                                     <p className="text-sm text-red-500">{errors.faseId.message}</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="faseOrquestra">Fase na Orquestra *</Label>
+                                <select
+                                    id="faseOrquestra"
+                                    {...register("faseOrquestra")}
+                                    className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+                                >
+                                    {faseOrquestraOptions.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </select>
+                                {errors.faseOrquestra && (
+                                    <p className="text-sm text-red-500">{errors.faseOrquestra.message}</p>
                                 )}
                             </div>
 

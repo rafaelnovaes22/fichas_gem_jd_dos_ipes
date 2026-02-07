@@ -6,6 +6,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Search, MoreVertical } from "lucide-react";
 
+const faseOrquestraLabels: Record<string, string> = {
+    ENSAIO: "Ensaio",
+    RJM: "RJM",
+    CULTO: "Culto",
+    TROCA_INSTRUMENTO_CULTO: "Troca Inst. - Culto",
+    TROCA_INSTRUMENTO_OFICIALIZACAO: "Troca Inst. - Ofic.",
+    OFICIALIZACAO: "Oficialização",
+    OFICIALIZADO: "Oficializado",
+};
+
+const faseOrquestraColors: Record<string, string> = {
+    ENSAIO: "bg-gray-100 text-gray-700",
+    RJM: "bg-yellow-100 text-yellow-700",
+    CULTO: "bg-blue-100 text-blue-700",
+    TROCA_INSTRUMENTO_CULTO: "bg-purple-100 text-purple-700",
+    TROCA_INSTRUMENTO_OFICIALIZACAO: "bg-indigo-100 text-indigo-700",
+    OFICIALIZACAO: "bg-orange-100 text-orange-700",
+    OFICIALIZADO: "bg-green-100 text-green-700",
+};
+
 export default async function AlunosPage() {
     const session = await getServerSession(authOptions);
     const isAdmin = session?.user?.role === "ADMIN";
@@ -42,9 +62,10 @@ export default async function AlunosPage() {
                     </p>
                 </div>
                 <Link href="/dashboard/alunos/novo">
-                    <Button>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Novo Aluno
+                    <Button className="h-10 md:h-9 px-4 md:px-3">
+                        <Plus className="w-5 h-5 md:w-4 md:h-4 mr-2" />
+                        <span className="hidden sm:inline">Novo Aluno</span>
+                        <span className="sm:hidden">Novo</span>
                     </Button>
                 </Link>
             </div>
@@ -77,46 +98,58 @@ export default async function AlunosPage() {
                     </CardContent>
                 </Card>
             ) : (
-                <div className="grid gap-4">
+                <div className="grid gap-3 md:gap-4">
                     {alunos.map((aluno) => (
                         <Card key={aluno.id} className="hover:shadow-md transition-shadow">
-                            <CardContent className="py-4">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                                            <span className="text-lg font-medium text-blue-700">
-                                                {aluno.nome.charAt(0).toUpperCase()}
+                            <CardContent className="p-3 md:p-4">
+                                <div className="flex items-center gap-3 md:gap-4">
+                                    {/* Avatar - Smaller on mobile */}
+                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                        <span className="text-base md:text-lg font-medium text-blue-700">
+                                            {aluno.nome.charAt(0).toUpperCase()}
+                                        </span>
+                                    </div>
+
+                                    {/* Main Info */}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <h3 className="font-semibold text-gray-900 text-sm md:text-base truncate">{aluno.nome}</h3>
+                                            <span className={`text-[10px] md:text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${faseOrquestraColors[aluno.faseOrquestra] || "bg-gray-100 text-gray-700"}`}>
+                                                {faseOrquestraLabels[aluno.faseOrquestra] || aluno.faseOrquestra}
                                             </span>
                                         </div>
-                                        <div>
-                                            <h3 className="font-semibold text-gray-900">{aluno.nome}</h3>
-                                            <div className="flex items-center gap-2 text-sm text-gray-500">
-                                                <span>{aluno.instrumento.nome}</span>
-                                                <span>•</span>
-                                                <span>{aluno.fase.nome}</span>
-                                                <span>•</span>
-                                                <span>{aluno.congregacao}</span>
-                                            </div>
+                                        <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-xs md:text-sm text-gray-500">
+                                            <span className="truncate max-w-[100px] md:max-w-none">{aluno.instrumento.nome}</span>
+                                            <span className="hidden md:inline">•</span>
+                                            <span className="truncate max-w-[80px] md:max-w-none">{aluno.fase.nome}</span>
+                                            <span className="hidden md:inline">•</span>
+                                            <span className="truncate max-w-[100px] md:max-w-none hidden sm:inline">{aluno.congregacao}</span>
                                         </div>
+                                        {/* Mobile-only congregação */}
+                                        <p className="text-xs text-gray-400 sm:hidden truncate">{aluno.congregacao}</p>
                                     </div>
-                                    <div className="flex items-center gap-4">
+
+                                    {/* Stats - Hidden on smallest screens, visible on larger mobile */}
+                                    <div className="hidden sm:flex items-center gap-3 md:gap-4">
                                         <div className="text-right">
-                                            <p className="text-sm text-gray-500">Instrutor{aluno.instrutor2 ? "es" : ""}</p>
-                                            <p className="text-sm font-medium">
+                                            <p className="text-xs md:text-sm text-gray-500">Instrutor{aluno.instrutor2 ? "es" : ""}</p>
+                                            <p className="text-xs md:text-sm font-medium">
                                                 {aluno.instrutor.usuario.nome.split(" ")[0]}
                                                 {aluno.instrutor2 && `, ${aluno.instrutor2.usuario.nome.split(" ")[0]}`}
                                             </p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-sm text-gray-500">Fichas</p>
-                                            <p className="text-sm font-medium">{aluno._count.fichas}</p>
+                                            <p className="text-xs md:text-sm text-gray-500">Fichas</p>
+                                            <p className="text-xs md:text-sm font-medium">{aluno._count.fichas}</p>
                                         </div>
-                                        <Link href={`/dashboard/alunos/${aluno.id}`}>
-                                            <Button variant="ghost" size="icon">
-                                                <MoreVertical className="w-4 h-4" />
-                                            </Button>
-                                        </Link>
                                     </div>
+
+                                    {/* Action Button - Larger touch target */}
+                                    <Link href={`/dashboard/alunos/${aluno.id}`}>
+                                        <Button variant="ghost" size="icon" className="h-10 w-10 md:h-9 md:w-9">
+                                            <MoreVertical className="w-5 h-5 md:w-4 md:h-4" />
+                                        </Button>
+                                    </Link>
                                 </div>
                             </CardContent>
                         </Card>
