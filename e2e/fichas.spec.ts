@@ -8,10 +8,12 @@ test.describe("Fichas de Acompanhamento", () => {
         ).toBeVisible();
     });
 
-    test("deve exibir contagem de alunos e fichas", async ({ page }) => {
+    test("deve exibir contagem de alunos e fichas no subtítulo", async ({
+        page,
+    }) => {
         await page.goto("/dashboard/fichas");
-        await expect(page.getByText(/aluno/i)).toBeVisible();
-        await expect(page.getByText(/ficha/i)).toBeVisible();
+        // O subtítulo tem formato "X alunos • Y fichas"
+        await expect(page.getByText(/\d+ aluno.*\d+ ficha/)).toBeVisible();
     });
 
     test("deve exibir barra de busca", async ({ page }) => {
@@ -23,79 +25,65 @@ test.describe("Fichas de Acompanhamento", () => {
 
     test("deve exibir cards de alunos agrupados", async ({ page }) => {
         await page.goto("/dashboard/fichas");
-        // Deve haver pelo menos um card de aluno (do seed)
-        const alunoCards = page.locator("button.w-full.text-left");
-        const count = await alunoCards.count();
-        expect(count).toBeGreaterThan(0);
+        // Deve haver pelo menos um nome de aluno visível (Maria Santos do seed)
+        await expect(page.getByText("Maria Santos")).toBeVisible();
     });
 
     test("deve exibir badge com quantidade de fichas", async ({ page }) => {
         await page.goto("/dashboard/fichas");
-        // Badge mostra "X de 4"
-        await expect(page.getByText(/de 4/)).toBeVisible();
+        // Badge "X de 4"
+        await expect(page.getByText(/\d de 4/).first()).toBeVisible();
     });
 
     test("deve expandir card do aluno ao clicar", async ({ page }) => {
         await page.goto("/dashboard/fichas");
-        // Clicar no primeiro card de aluno
-        const firstCard = page.locator("button.w-full.text-left").first();
-        await firstCard.click();
-
-        // Deve mostrar a área expandida com sub-fichas
-        await expect(page.locator(".border-t.bg-gray-50\\/50").first()).toBeVisible();
+        // Clicar no card de Maria Santos
+        await page.getByText("Maria Santos").click();
+        // Deve mostrar a sub-ficha com info de aulas
+        await expect(page.getByText(/\/20 aulas/).first()).toBeVisible();
     });
 
     test("deve mostrar sub-fichas ao expandir", async ({ page }) => {
         await page.goto("/dashboard/fichas");
-        const firstCard = page.locator("button.w-full.text-left").first();
-        await firstCard.click();
+        await page.getByText("Maria Santos").click();
 
-        // Deve mostrar pelo menos uma sub-ficha com info de aulas
-        await expect(page.getByText(/\/20 aulas/)).toBeVisible();
-        await expect(page.getByText(/\/3 aval/)).toBeVisible();
+        await expect(page.getByText(/\/20 aulas/).first()).toBeVisible();
+        await expect(page.getByText(/\/3 aval/).first()).toBeVisible();
     });
 
     test("sub-ficha deve mostrar status", async ({ page }) => {
         await page.goto("/dashboard/fichas");
-        const firstCard = page.locator("button.w-full.text-left").first();
-        await firstCard.click();
+        await page.getByText("Maria Santos").click();
 
-        // Deve mostrar status (Em andamento, APTO, ou N/APTO)
-        const statusBadge = page.locator(
-            ".border-t .rounded-full"
-        );
-        const count = await statusBadge.count();
-        expect(count).toBeGreaterThan(0);
+        // Deve mostrar "Em andamento", "APTO" ou "N/APTO"
+        await expect(
+            page
+                .getByText(/Em andamento|APTO|N\/APTO/)
+                .first()
+        ).toBeVisible();
     });
 
     test("sub-ficha deve navegar para detalhe ao clicar", async ({
         page,
     }) => {
         await page.goto("/dashboard/fichas");
-        const firstCard = page.locator("button.w-full.text-left").first();
-        await firstCard.click();
+        await page.getByText("Maria Santos").click();
 
-        // Clicar na primeira sub-ficha (link dentro da área expandida)
-        const subFichaLink = page
-            .locator(".border-t a")
-            .first();
-        await subFichaLink.click();
+        // Clicar na sub-ficha "Teoria Musical"
+        await page.getByText("Teoria Musical").click();
         await page.waitForURL("**/dashboard/fichas/**");
     });
 
     test("deve colapsar card ao clicar novamente", async ({ page }) => {
         await page.goto("/dashboard/fichas");
-        const firstCard = page.locator("button.w-full.text-left").first();
 
         // Expandir
-        await firstCard.click();
-        await expect(page.locator(".border-t.bg-gray-50\\/50").first()).toBeVisible();
+        await page.getByText("Maria Santos").click();
+        await expect(page.getByText(/\/20 aulas/).first()).toBeVisible();
 
-        // Colapsar
-        await firstCard.click();
-        await expect(
-            page.locator(".border-t.bg-gray-50\\/50")
-        ).not.toBeVisible();
+        // Colapsar - clicar no botão do card novamente
+        await page.getByText("Maria Santos").click();
+        await expect(page.getByText(/\/20 aulas/)).not.toBeVisible();
     });
 
     test("busca deve filtrar alunos por nome", async ({ page }) => {
@@ -111,17 +99,12 @@ test.describe("Fichas de Acompanhamento", () => {
         // Limpar busca
         await searchInput.clear();
         // Cards devem reaparecer
-        const alunoCards = page.locator("button.w-full.text-left");
-        const count = await alunoCards.count();
-        expect(count).toBeGreaterThan(0);
+        await expect(page.getByText("Maria Santos")).toBeVisible();
     });
 
-    test("deve mostrar tipo de aula com cores corretas nas sub-fichas", async ({
-        page,
-    }) => {
+    test("deve mostrar tipo de aula nas sub-fichas", async ({ page }) => {
         await page.goto("/dashboard/fichas");
-        const firstCard = page.locator("button.w-full.text-left").first();
-        await firstCard.click();
+        await page.getByText("Maria Santos").click();
 
         // Verificar que sub-fichas mostram labels de tipo
         const tipoLabels = [
@@ -130,83 +113,74 @@ test.describe("Fichas de Acompanhamento", () => {
             "Prática de Instrumento",
             "Hinário",
         ];
-        const subFichaArea = page.locator(".border-t.bg-gray-50\\/50");
-        const text = await subFichaArea.textContent();
-        const hasAnyTipo = tipoLabels.some((label) => text?.includes(label));
+        const hasAnyTipo = await Promise.any(
+            tipoLabels.map((label) =>
+                page
+                    .getByText(label)
+                    .first()
+                    .isVisible()
+                    .then((v) => (v ? true : Promise.reject()))
+            )
+        ).catch(() => false);
         expect(hasAnyTipo).toBeTruthy();
     });
 });
 
 test.describe("Ficha Detalhe", () => {
-    test("deve exibir a página de detalhe da ficha", async ({ page }) => {
-        // Buscar uma ficha existente via API
+    // Helper: find an aluno that has fichas
+    async function findAlunoWithFichas(page: import("@playwright/test").Page) {
         const alunosRes = await page.request.get("/api/alunos");
         const alunos = await alunosRes.json();
-        if (alunos.length === 0) return;
+        for (const a of alunos) {
+            const res = await page.request.get(`/api/alunos/${a.id}`);
+            const aluno = await res.json();
+            if (aluno.fichas?.length > 0) return aluno;
+        }
+        return null;
+    }
 
-        const alunoRes = await page.request.get(
-            `/api/alunos/${alunos[0].id}`
-        );
-        const aluno = await alunoRes.json();
-        if (!aluno.fichas || aluno.fichas.length === 0) return;
+    test("deve exibir a página de detalhe da ficha", async ({ page }) => {
+        const aluno = await findAlunoWithFichas(page);
+        if (!aluno) return;
 
         await page.goto(`/dashboard/fichas/${aluno.fichas[0].id}`);
-        // Deve mostrar o seletor de fichas
         await expect(
-            page.getByText("Selecione a Ficha do Aluno")
+            page.getByText("SELECIONE A FICHA DO ALUNO")
         ).toBeVisible();
     });
 
     test("deve mostrar seletor de tipo de aula com 4 opções", async ({
         page,
     }) => {
-        const alunosRes = await page.request.get("/api/alunos");
-        const alunos = await alunosRes.json();
-        if (alunos.length === 0) return;
-
-        const alunoRes = await page.request.get(
-            `/api/alunos/${alunos[0].id}`
-        );
-        const aluno = await alunoRes.json();
-        if (!aluno.fichas || aluno.fichas.length === 0) return;
+        const aluno = await findAlunoWithFichas(page);
+        if (!aluno) return;
 
         await page.goto(`/dashboard/fichas/${aluno.fichas[0].id}`);
-        await expect(page.getByText("Solfejo")).toBeVisible();
-        await expect(page.getByText("Teoria Musical")).toBeVisible();
-        await expect(page.getByText("Prática de Instrumento")).toBeVisible();
-        await expect(page.getByText("Hinário")).toBeVisible();
+        await expect(page.getByText("Solfejo").first()).toBeVisible();
+        await expect(page.getByText("Teoria Musical").first()).toBeVisible();
+        await expect(
+            page.getByText("Prática de Instrumento").first()
+        ).toBeVisible();
+        await expect(page.getByText("Hinário").first()).toBeVisible();
     });
 
     test("deve exibir informações do aluno no cabeçalho", async ({
         page,
     }) => {
-        const alunosRes = await page.request.get("/api/alunos");
-        const alunos = await alunosRes.json();
-        if (alunos.length === 0) return;
-
-        const alunoRes = await page.request.get(
-            `/api/alunos/${alunos[0].id}`
-        );
-        const aluno = await alunoRes.json();
-        if (!aluno.fichas || aluno.fichas.length === 0) return;
+        const aluno = await findAlunoWithFichas(page);
+        if (!aluno) return;
 
         await page.goto(`/dashboard/fichas/${aluno.fichas[0].id}`);
-        await expect(page.getByText(aluno.nome)).toBeVisible();
+        await expect(page.getByText(aluno.nome).first()).toBeVisible();
     });
 
-    test("deve exibir tabela de aulas", async ({ page }) => {
-        const alunosRes = await page.request.get("/api/alunos");
-        const alunos = await alunosRes.json();
-        if (alunos.length === 0) return;
-
-        const alunoRes = await page.request.get(
-            `/api/alunos/${alunos[0].id}`
-        );
-        const aluno = await alunoRes.json();
-        if (!aluno.fichas || aluno.fichas.length === 0) return;
+    test("deve exibir seção de aulas", async ({ page }) => {
+        const aluno = await findAlunoWithFichas(page);
+        if (!aluno) return;
 
         await page.goto(`/dashboard/fichas/${aluno.fichas[0].id}`);
-        // Desktop ou mobile, deve ter conteúdo de aulas
-        await expect(page.getByText(/Aula/i).first()).toBeVisible();
+        await expect(
+            page.getByText("FICHA DE ACOMPANHAMENTO - GEM")
+        ).toBeVisible();
     });
 });

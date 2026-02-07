@@ -22,23 +22,26 @@ test.describe("Dashboard", () => {
 
     test("admin deve ver card de Instrutores", async ({ page }) => {
         await page.goto("/dashboard");
-        await expect(page.getByText("Instrutores")).toBeVisible();
+        await expect(page.getByText("instrutores ativos")).toBeVisible();
     });
 
     test("deve exibir seção de alunos recentes", async ({ page }) => {
         await page.goto("/dashboard");
-        await expect(page.getByText("Alunos Recentes")).toBeVisible();
+        await expect(
+            page.getByRole("heading", { name: "Alunos Recentes" })
+        ).toBeVisible();
     });
 
     test("deve exibir seção de avaliações pendentes", async ({ page }) => {
         await page.goto("/dashboard");
-        await expect(page.getByText("Avaliações Pendentes")).toBeVisible();
+        await expect(
+            page.getByRole("heading", { name: "Avaliações Pendentes" })
+        ).toBeVisible();
     });
 
     test("links de navegação devem estar funcionais", async ({ page }) => {
         await page.goto("/dashboard");
 
-        // Clicar em "Ver todos" nos alunos recentes
         const verTodosLink = page
             .getByRole("link", { name: "Ver todos" })
             .first();

@@ -25,15 +25,16 @@ test.describe("API - Instrumentos", () => {
     test("POST /api/instrumentos - deve criar instrumento", async ({
         request,
     }) => {
+        const uniqueName = `Instrumento E2E ${Date.now()}`;
         const response = await request.post("/api/instrumentos", {
             data: {
-                nome: "Instrumento Teste E2E",
+                nome: uniqueName,
                 categoria: "Teste",
             },
         });
         expect(response.ok()).toBeTruthy();
         const instrumento = await response.json();
-        expect(instrumento.nome).toBe("Instrumento Teste E2E");
+        expect(instrumento.nome).toBe(uniqueName);
     });
 
     test("GET /api/instrumentos/:id - deve buscar instrumento", async ({

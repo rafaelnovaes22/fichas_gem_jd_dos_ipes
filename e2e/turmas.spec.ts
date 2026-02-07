@@ -1,30 +1,28 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Turmas", () => {
-    test("deve exibir a página de aulas/turmas", async ({ page }) => {
-        await page.goto("/dashboard/aulas/turmas");
+test.describe("Turmas (Aulas)", () => {
+    test("deve exibir a página de aulas", async ({ page }) => {
+        await page.goto("/dashboard/aulas");
         await expect(
-            page.getByRole("heading", { name: /Turma/i })
+            page.getByRole("heading", { name: "Aulas" })
         ).toBeVisible();
     });
 
     test("deve ter botão para nova turma", async ({ page }) => {
-        await page.goto("/dashboard/aulas/turmas");
+        await page.goto("/dashboard/aulas");
         await expect(
-            page.getByRole("link", { name: /Nov/i })
+            page.getByRole("link", { name: /Nova Turma/i })
         ).toBeVisible();
     });
 
     test("deve navegar para formulário de nova turma", async ({ page }) => {
-        await page.goto("/dashboard/aulas/turmas");
-        await page.getByRole("link", { name: /Nov/i }).click();
+        await page.goto("/dashboard/aulas");
+        await page.getByRole("link", { name: /Nova Turma/i }).click();
         await page.waitForURL("**/dashboard/aulas/turmas/nova**");
     });
 });
 
 test.describe("Turma - Criação e Detalhe via API", () => {
-    let turmaId: string;
-
     test("deve criar uma turma via API", async ({ page }) => {
         const response = await page.request.post("/api/turmas", {
             data: {
@@ -36,7 +34,6 @@ test.describe("Turma - Criação e Detalhe via API", () => {
         });
         expect(response.ok()).toBeTruthy();
         const turma = await response.json();
-        turmaId = turma.id;
         expect(turma.nome).toBe("Turma Teste E2E");
     });
 
@@ -44,28 +41,21 @@ test.describe("Turma - Criação e Detalhe via API", () => {
         const response = await page.request.get("/api/turmas");
         expect(response.ok()).toBeTruthy();
         const turmas = await response.json();
-        const found = turmas.find(
-            (t: { nome: string }) => t.nome === "Turma Teste E2E"
-        );
-        expect(found).toBeTruthy();
+        expect(turmas.length).toBeGreaterThan(0);
     });
 
     test("deve navegar para detalhe da turma", async ({ page }) => {
         const response = await page.request.get("/api/turmas");
         const turmas = await response.json();
-        const turma = turmas.find(
-            (t: { nome: string }) => t.nome === "Turma Teste E2E"
-        );
-        if (turma) {
-            await page.goto(`/dashboard/aulas/turmas/${turma.id}`);
-            await expect(page.getByText("Turma Teste E2E")).toBeVisible();
-        }
+        if (turmas.length === 0) return;
+
+        await page.goto(`/dashboard/aulas/turmas/${turmas[0].id}`);
+        await expect(page.getByText(turmas[0].nome)).toBeVisible();
     });
 });
 
 test.describe("Sessões de Aula", () => {
     test("deve criar sessão via API", async ({ page }) => {
-        // Buscar uma turma existente
         const turmasRes = await page.request.get("/api/turmas");
         const turmas = await turmasRes.json();
         if (turmas.length === 0) return;

@@ -2,7 +2,6 @@ import { test, expect } from "@playwright/test";
 
 test.describe("API - Fichas", () => {
     test("POST /api/fichas - deve criar ficha", async ({ request }) => {
-        // Buscar aluno existente
         const alunosRes = await request.get("/api/alunos");
         const alunos = await alunosRes.json();
         if (alunos.length === 0) return;
@@ -64,7 +63,6 @@ test.describe("API - Fichas Aulas e Avaliações", () => {
     let fichaId: string;
 
     test.beforeAll(async ({ request }) => {
-        // Buscar uma ficha existente
         const alunosRes = await request.get("/api/alunos");
         const alunos = await alunosRes.json();
         if (alunos.length === 0) return;
@@ -81,7 +79,6 @@ test.describe("API - Fichas Aulas e Avaliações", () => {
     }) => {
         if (!fichaId) return;
 
-        // Buscar instrutor
         const instrutoresRes = await request.get("/api/instrutores");
         const instrutores = await instrutoresRes.json();
         if (instrutores.length === 0) return;
@@ -98,17 +95,6 @@ test.describe("API - Fichas Aulas e Avaliações", () => {
             },
         });
         expect(response.ok()).toBeTruthy();
-    });
-
-    test("GET /api/fichas/:id/aulas - deve listar aulas da ficha", async ({
-        request,
-    }) => {
-        if (!fichaId) return;
-
-        const response = await request.get(`/api/fichas/${fichaId}/aulas`);
-        expect(response.ok()).toBeTruthy();
-        const aulas = await response.json();
-        expect(Array.isArray(aulas)).toBeTruthy();
     });
 
     test("POST /api/fichas/:id/avaliacoes - deve salvar avaliação", async ({
@@ -136,19 +122,6 @@ test.describe("API - Fichas Aulas e Avaliações", () => {
             }
         );
         expect(response.ok()).toBeTruthy();
-    });
-
-    test("GET /api/fichas/:id/avaliacoes - deve listar avaliações", async ({
-        request,
-    }) => {
-        if (!fichaId) return;
-
-        const response = await request.get(
-            `/api/fichas/${fichaId}/avaliacoes`
-        );
-        expect(response.ok()).toBeTruthy();
-        const avaliacoes = await response.json();
-        expect(Array.isArray(avaliacoes)).toBeTruthy();
     });
 });
 

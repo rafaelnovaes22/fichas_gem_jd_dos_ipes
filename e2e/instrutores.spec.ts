@@ -10,7 +10,6 @@ test.describe("Instrutores", () => {
 
     test("deve listar instrutores do seed", async ({ page }) => {
         await page.goto("/dashboard/instrutores");
-        // O seed cria "João Silva" como instrutor
         await expect(page.getByText("João Silva")).toBeVisible();
     });
 
@@ -23,10 +22,11 @@ test.describe("Instrutores", () => {
     test("deve navegar para detalhe do instrutor", async ({ page }) => {
         const response = await page.request.get("/api/instrutores");
         const instrutores = await response.json();
+        if (instrutores.length === 0) return;
 
-        if (instrutores.length > 0) {
-            await page.goto(`/dashboard/instrutores/${instrutores[0].id}`);
-            await expect(page.getByText("João Silva")).toBeVisible();
-        }
+        // Navigate to the first instrutor
+        await page.goto(`/dashboard/instrutores/${instrutores[0].id}`);
+        // Should show some info about the instrutor
+        await expect(page.getByRole("heading", { name: instrutores[0].usuario.nome })).toBeVisible();
     });
 });

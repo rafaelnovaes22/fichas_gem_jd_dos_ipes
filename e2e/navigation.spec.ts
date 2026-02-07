@@ -5,7 +5,6 @@ test.describe("Navegação - Sidebar e Layout", () => {
         await page.goto("/dashboard");
         await page.waitForLoadState("networkidle");
 
-        // Desktop sidebar links
         await expect(
             page.getByRole("link", { name: /Dashboard/i }).first()
         ).toBeVisible();
@@ -18,7 +17,6 @@ test.describe("Navegação - Sidebar e Layout", () => {
     });
 
     test("deve navegar entre as páginas principais", async ({ page }) => {
-        // Dashboard -> Alunos
         await page.goto("/dashboard");
         await page.getByRole("link", { name: /Alunos/i }).first().click();
         await page.waitForURL("**/dashboard/alunos**");
@@ -26,7 +24,6 @@ test.describe("Navegação - Sidebar e Layout", () => {
             page.getByRole("heading", { name: "Alunos" })
         ).toBeVisible();
 
-        // Alunos -> Fichas
         await page.getByRole("link", { name: /Fichas/i }).first().click();
         await page.waitForURL("**/dashboard/fichas**");
         await expect(
@@ -55,10 +52,10 @@ test.describe("Navegação - Sidebar e Layout", () => {
         ).toBeVisible();
     });
 
-    test("deve navegar para turmas", async ({ page }) => {
-        await page.goto("/dashboard/aulas/turmas");
+    test("deve navegar para aulas", async ({ page }) => {
+        await page.goto("/dashboard/aulas");
         await expect(
-            page.getByRole("heading", { name: /Turma/i })
+            page.getByRole("heading", { name: "Aulas" })
         ).toBeVisible();
     });
 });

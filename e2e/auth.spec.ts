@@ -31,7 +31,7 @@ test.describe("Autenticação", () => {
         await page.getByLabel("Senha").fill("admin123");
         await page.getByRole("button", { name: "Entrar" }).click();
         await page.waitForURL("**/dashboard**");
-        await expect(page.getByText("Dashboard")).toBeVisible();
+        await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
     });
 
     test("deve fazer login com credenciais válidas (instrutor)", async ({
@@ -42,7 +42,7 @@ test.describe("Autenticação", () => {
         await page.getByLabel("Senha").fill("admin123");
         await page.getByRole("button", { name: "Entrar" }).click();
         await page.waitForURL("**/dashboard**");
-        await expect(page.getByText("Dashboard")).toBeVisible();
+        await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
     });
 
     test("deve redirecionar para login se não autenticado", async ({
