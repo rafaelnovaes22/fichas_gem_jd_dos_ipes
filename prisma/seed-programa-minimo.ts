@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 // Programa Mínimo para Músicos 2023 - Baseado na tabela oficial da CCB
 interface ProgramaMinimoData {
   instrumento: string;
+  categoria: string;
   nivel: NivelProgramaMinimo;
   itens: {
     tipo: TipoConteudoPM;
@@ -16,579 +17,594 @@ interface ProgramaMinimoData {
 }
 
 const programaMinimoData: ProgramaMinimoData[] = [
+  // === CORDAS ===
   // VIOLINO
   {
     instrumento: "Violino",
+    categoria: "Cordas",
     nivel: NivelProgramaMinimo.RJM,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "N. LAOURENÇO Vol.1 até pág.35",
-        alternativas: "Schimoll até pág.46",
+        descricao: "N. LAOUREX Vol. 1 até pág. 35",
+        alternativas: "Schimoll até pág. 46 (lição 113) + H. SITT Vol 1 até lição 8 OU MÉTODO FACILITADO - Ed. Britten - até pág. 40",
         obrigatorio: true,
         ordem: 1,
       },
       {
-        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "H. SITT Vol.1 até lição 6",
-        alternativas: "MÉTODO FACILITADO Ed. Britten até pág.40",
+        tipo: TipoConteudoPM.HINARIO,
+        descricao: "Hinos 431 a 480 soprano no natural",
         obrigatorio: true,
         ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 12",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Hinos 431 a 480",
-        obrigatorio: true,
-        ordem: 4,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "431 a 480 Voz principal",
-        obrigatorio: true,
-        ordem: 5,
       },
     ],
   },
   {
     instrumento: "Violino",
+    categoria: "Cordas",
     nivel: NivelProgramaMinimo.CULTO,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "N. LAOURENÇO Vol.1 completo + Vol.3 até pág.15",
-        alternativas: "Schimoll até pág.67",
+        descricao: "N. LAOUREX Vol. 1 completo + Vol. 3 até pág. 15",
+        alternativas: "Schimoll até pág. 67 (lição 182) + H. SITT Vol 1 até lição 14 OU MÉTODO FACILITADO - Ed. Britten - até pág. 55",
         obrigatorio: true,
         ordem: 1,
       },
       {
-        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "H. SITT Vol.1 até lição 14",
-        alternativas: "MÉTODO FACILITADO Ed. Britten até pág.55",
+        tipo: TipoConteudoPM.HINARIO,
+        descricao: "Hinário completo soprano 8ª acima",
         obrigatorio: true,
         ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 16",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 4,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 5,
       },
     ],
   },
   {
     instrumento: "Violino",
+    categoria: "Cordas",
     nivel: NivelProgramaMinimo.OFICIALIZACAO,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "N. LAOURENÇO Vol.1 completo + Vol.3 até pág.24 + da pág.44 a 53",
-        alternativas: "MÉTODO Schimoll completo",
+        descricao: "N. LAOUREX Vol. 1 completo + Vol. 3 até pág. 24 e da pág. 44 a 53",
+        alternativas: "MÉTODO Schimoll completo + H. SITT Op.32 Vol. 1 completo OU MÉTODO FACILITADO - Ed. Britten - Completo",
         obrigatorio: true,
         ordem: 1,
       },
       {
-        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "H. SITT Op.32 Vol.1 completo",
-        alternativas: "MÉTODO FACILITADO Ed. Britten Completo",
+        tipo: TipoConteudoPM.HINARIO,
+        descricao: "Hinário completo soprano 8ª acima e contralto natural",
         obrigatorio: true,
         ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA Completo com Revisão",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 4,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 5,
       },
     ],
   },
   // VIOLA
   {
     instrumento: "Viola",
+    categoria: "Cordas",
     nivel: NivelProgramaMinimo.RJM,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método Premier Vol.1 até pág.44",
+        descricao: "BEGINNING STRINGS até lição VI + BERTA VOLMER vol. 1 até pág. 31",
+        alternativas: "MÉTODO FACILITADO - Ed. Britten - até pág. 40",
         obrigatorio: true,
         ordem: 1,
-      },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 12",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Hinos 431 a 480",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "431 a 480 Voz principal",
-        obrigatorio: true,
-        ordem: 4,
       },
     ],
   },
   {
     instrumento: "Viola",
+    categoria: "Cordas",
     nivel: NivelProgramaMinimo.CULTO,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método Premier Vol.1 completo",
+        descricao: "BERTA VOLMER vol. 1 até pág. 62 + MÉTODO A TUNE A DAY C.P. Herfurth Vol. 3 até pág 16",
+        alternativas: "MÉTODO FACILITADO - Ed. Britten - até pág. 55",
         obrigatorio: true,
         ordem: 1,
-      },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 16",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
       },
     ],
   },
   {
     instrumento: "Viola",
+    categoria: "Cordas",
     nivel: NivelProgramaMinimo.OFICIALIZACAO,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método Premier Vol.1 e Vol.2 completo",
+        descricao: "BERTA VOLMER vol. 1 completo + A TUNE A DAY C.P. Herfurth Vol. 3 completo",
+        alternativas: "MÉTODO FACILITADO - Ed. Britten - completo",
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA Completo com Revisão",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
-  // VIOLONCELO
+  // VIOLONCELLO
   {
     instrumento: "Violoncelo",
+    categoria: "Cordas",
     nivel: NivelProgramaMinimo.RJM,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método Schimoll até pág.38",
+        descricao: "BEGINNING STRINGS até lição VI + DOTZAUER vol. 1 até pág. 34 (lição 80)",
+        alternativas: "MÉTODO FACILITADO - Ed. Britten - até pág. 40",
         obrigatorio: true,
         ordem: 1,
-      },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 12",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Hinos 431 a 480",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "431 a 480 Voz principal",
-        obrigatorio: true,
-        ordem: 4,
       },
     ],
   },
   {
     instrumento: "Violoncelo",
+    categoria: "Cordas",
     nivel: NivelProgramaMinimo.CULTO,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método Schimoll até pág.78",
+        descricao: "DOTZAUER vol. 1 completo + DOTZAUER vol. 2 até pág. 03 (lição 111)",
+        alternativas: "MÉTODO FACILITADO - Ed. Britten - até pág. 52",
         obrigatorio: true,
         ordem: 1,
-      },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 16",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
       },
     ],
   },
   {
     instrumento: "Violoncelo",
+    categoria: "Cordas",
     nivel: NivelProgramaMinimo.OFICIALIZACAO,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método Schimoll completo + CCB MÉTODO Preparatório",
+        descricao: "DOTZAUER vol. 1 completo + DOTZAUER vol. 2 até pág. 19 (lição 154)",
+        alternativas: "MÉTODO FACILITADO - Ed. Britten - Completo",
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA Completo com Revisão",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
+
+  // === MADEIRAS ===
   // FLAUTA
   {
-    instrumento: "Flauta",
+    instrumento: "Flauta Transversal",
+    categoria: "Madeiras",
     nivel: NivelProgramaMinimo.RJM,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método BONADE Vol.1 até lição 4",
+        descricao: "Rubank Elementary - Completo",
+        alternativas: "PARÉS até lição 41 OU GALLI até pág. 41 OU MÉTODO PRÁTICO - Almeida Dias - até fase 13",
         obrigatorio: true,
         ordem: 1,
-      },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 12",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Hinos 431 a 480",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "431 a 480 Voz principal",
-        obrigatorio: true,
-        ordem: 4,
       },
     ],
   },
   {
-    instrumento: "Flauta",
+    instrumento: "Flauta Transversal",
+    categoria: "Madeiras",
     nivel: NivelProgramaMinimo.CULTO,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método BONADE Vol.1 até lição 8",
+        descricao: "Rubank Intermediate - até a pg. 29",
+        alternativas: "PARÉS até lição 62 OU GALLI completo OU MÉTODO PRÁTICO - Almeida Dias - até fase 25",
         obrigatorio: true,
         ordem: 1,
-      },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 16",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
       },
     ],
   },
   {
-    instrumento: "Flauta",
+    instrumento: "Flauta Transversal",
+    categoria: "Madeiras",
     nivel: NivelProgramaMinimo.OFICIALIZACAO,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método BONADE Vol.1 e Vol.2 completo",
+        descricao: "Rubank Intermediate - Completo",
+        alternativas: "PARÉS até lição 62 OU GALLI completo OU MÉTODO PRÁTICO - Almeida Dias - até fase 25",
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA Completo com Revisão",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
-  // CLARINETA
+  // OBOÉ (inclui Oboé d'Amore e Corne Inglês)
   {
-    instrumento: "Clarineta",
+    instrumento: "Oboé",
+    categoria: "Madeiras",
     nivel: NivelProgramaMinimo.RJM,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método ENDRESEN Vol.1 até pág.30",
+        descricao: "RUBANK Elementary Method for Oboe - Completo",
+        alternativas: "GIAMPIERI até pág. 21",
         obrigatorio: true,
         ordem: 1,
-      },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 12",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Hinos 431 a 480",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "431 a 480 Voz principal",
-        obrigatorio: true,
-        ordem: 4,
       },
     ],
   },
   {
-    instrumento: "Clarineta",
+    instrumento: "Oboé",
+    categoria: "Madeiras",
     nivel: NivelProgramaMinimo.CULTO,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método ENDRESEN Vol.1 até pág.60",
+        descricao: "RUBANK Intermediate Method for Oboe até pág. 16",
+        alternativas: "GIAMPIERI até pág. 30",
         obrigatorio: true,
         ordem: 1,
-      },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 16",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
       },
     ],
   },
   {
-    instrumento: "Clarineta",
+    instrumento: "Oboé",
+    categoria: "Madeiras",
     nivel: NivelProgramaMinimo.OFICIALIZACAO,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método ENDRESEN Vol.1 e Vol.2 completo",
+        descricao: "RUBANK Intermediate Method for Oboe até pág. 30",
+        alternativas: "GIAMPIERI até pág. 50",
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA Completo com Revisão",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
-  // SAXOFONE
+  // FAGOTE
   {
-    instrumento: "Saxofone",
+    instrumento: "Fagote",
+    categoria: "Madeiras",
     nivel: NivelProgramaMinimo.RJM,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método RUBANK Vol.1 até pág.24",
+        descricao: "WEISSENBORN até Módulo 12",
+        alternativas: "GIAMPIERI até pág. 14",
         obrigatorio: true,
         ordem: 1,
-      },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 12",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Hinos 431 a 480",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "431 a 480 Voz principal",
-        obrigatorio: true,
-        ordem: 4,
       },
     ],
   },
   {
-    instrumento: "Saxofone",
+    instrumento: "Fagote",
+    categoria: "Madeiras",
     nivel: NivelProgramaMinimo.CULTO,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método RUBANK Vol.1 até pág.48",
+        descricao: "WEISSENBORN até Módulo 15",
+        alternativas: "GIAMPIERI até pág. 18",
         obrigatorio: true,
         ordem: 1,
-      },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 16",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
       },
     ],
   },
   {
-    instrumento: "Saxofone",
+    instrumento: "Fagote",
+    categoria: "Madeiras",
     nivel: NivelProgramaMinimo.OFICIALIZACAO,
     itens: [
       {
         tipo: TipoConteudoPM.METODO_INSTRUMENTO,
-        descricao: "Método RUBANK Vol.1 e Vol.2 completo",
+        descricao: "WEISSENBORN até Módulo 20",
+        alternativas: "GIAMPIERI até pág. 23",
         obrigatorio: true,
         ordem: 1,
       },
+    ],
+  },
+  // CLARINETE (Sib)
+  {
+    instrumento: "Clarinete",
+    categoria: "Madeiras",
+    nivel: NivelProgramaMinimo.RJM,
+    itens: [
       {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA Completo com Revisão",
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pág. 28",
+        alternativas: "DOMINGOS PECCI até pág. 29 OU GALPER - Book 1 Lição 26 - Até exercício 110",
         obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
+        ordem: 1,
       },
     ],
   },
+  {
+    instrumento: "Clarinete",
+    categoria: "Madeiras",
+    nivel: NivelProgramaMinimo.CULTO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pág. 41",
+        alternativas: "DOMINGOS PECCI até pág. 36",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  {
+    instrumento: "Clarinete",
+    categoria: "Madeiras",
+    nivel: NivelProgramaMinimo.OFICIALIZACAO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pág. 63",
+        alternativas: "DOMINGOS PECCI completo OU GALPER - Book 1 Completo + Book 2 até Pág. 29",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  // CLARINETE ALTO (Mib)
+  {
+    instrumento: "Clarinete Alto",
+    categoria: "Madeiras",
+    nivel: NivelProgramaMinimo.RJM,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pág. 28",
+        alternativas: "GALPER - Book 1 Lição 26 - Até exercício 110",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  {
+    instrumento: "Clarinete Alto",
+    categoria: "Madeiras",
+    nivel: NivelProgramaMinimo.CULTO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pág. 36",
+        alternativas: "GALPER - Book 1 Completo + Book 2 até Pág. 18",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  {
+    instrumento: "Clarinete Alto",
+    categoria: "Madeiras",
+    nivel: NivelProgramaMinimo.OFICIALIZACAO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pág. 50",
+        alternativas: "GALPER - Book 1 Completo + Book 2 até Pág. 29",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  // CLARINETE BAIXO (Sib)
+  {
+    instrumento: "Clarinete Baixo",
+    categoria: "Madeiras",
+    nivel: NivelProgramaMinimo.RJM,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pág. 28",
+        alternativas: "GALPER - Book 1 Lição 26 - Até exercício 110",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  {
+    instrumento: "Clarinete Baixo",
+    categoria: "Madeiras",
+    nivel: NivelProgramaMinimo.CULTO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pág. 36",
+        alternativas: "GALPER - Book 1 Completo + Book 2 até Pág. 18",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  {
+    instrumento: "Clarinete Baixo",
+    categoria: "Madeiras",
+    nivel: NivelProgramaMinimo.OFICIALIZACAO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pág. 50",
+        alternativas: "GALPER - Book 1 Completo + Book 2 até Pág. 29",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+
+  // === SAXOFONES ===
+  // SAXOFONE SOPRANO
+  {
+    instrumento: "Saxofone Soprano",
+    categoria: "Saxofones",
+    nivel: NivelProgramaMinimo.RJM,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pg.21",
+        alternativas: "AMADEU RUSSO até pg.25 OU MÉTODO PRÁTICO - Almeida Dias - até fase 13",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  {
+    instrumento: "Saxofone Soprano",
+    categoria: "Saxofones",
+    nivel: NivelProgramaMinimo.CULTO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pg.36",
+        alternativas: "AMADEU RUSSO até pg.36 OU MÉTODO PRÁTICO - Almeida Dias - até fase 20",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  {
+    instrumento: "Saxofone Soprano",
+    categoria: "Saxofones",
+    nivel: NivelProgramaMinimo.OFICIALIZACAO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pg.50",
+        alternativas: "AMADEU RUSSO até pg.47 OU MÉTODO PRÁTICO - Almeida Dias - até fase 25",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  // SAXOFONE ALTO
+  {
+    instrumento: "Saxofone Alto",
+    categoria: "Saxofones",
+    nivel: NivelProgramaMinimo.RJM,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pg.21",
+        alternativas: "AMADEU RUSSO até pg.25 OU MÉTODO PRÁTICO - Almeida Dias - até fase 13",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  {
+    instrumento: "Saxofone Alto",
+    categoria: "Saxofones",
+    nivel: NivelProgramaMinimo.CULTO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pg.36",
+        alternativas: "AMADEU RUSSO até pg.36 OU MÉTODO PRÁTICO - Almeida Dias - até fase 20",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  {
+    instrumento: "Saxofone Alto",
+    categoria: "Saxofones",
+    nivel: NivelProgramaMinimo.OFICIALIZACAO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pg.50",
+        alternativas: "AMADEU RUSSO até pg.47 OU MÉTODO PRÁTICO - Almeida Dias - até fase 25",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  // SAXOFONE TENOR
+  {
+    instrumento: "Saxofone Tenor",
+    categoria: "Saxofones",
+    nivel: NivelProgramaMinimo.RJM,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pg.21",
+        alternativas: "AMADEU RUSSO até pg.25 OU MÉTODO PRÁTICO - Almeida Dias - até fase 13",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  {
+    instrumento: "Saxofone Tenor",
+    categoria: "Saxofones",
+    nivel: NivelProgramaMinimo.CULTO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pg.36",
+        alternativas: "AMADEU RUSSO até pg.36 OU MÉTODO PRÁTICO - Almeida Dias - até fase 20",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  {
+    instrumento: "Saxofone Tenor",
+    categoria: "Saxofones",
+    nivel: NivelProgramaMinimo.OFICIALIZACAO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pg.50",
+        alternativas: "AMADEU RUSSO até pg.47 OU MÉTODO PRÁTICO - Almeida Dias - até fase 25",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  // SAXOFONE BARÍTONO
+  {
+    instrumento: "Saxofone Barítono",
+    categoria: "Saxofones",
+    nivel: NivelProgramaMinimo.RJM,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pg.21",
+        alternativas: "AMADEU RUSSO até pg.25 OU MÉTODO PRÁTICO - Almeida Dias - até fase 13",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  {
+    instrumento: "Saxofone Barítono",
+    categoria: "Saxofones",
+    nivel: NivelProgramaMinimo.CULTO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pg.36",
+        alternativas: "AMADEU RUSSO até pg.36 OU MÉTODO PRÁTICO - Almeida Dias - até fase 20",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+  {
+    instrumento: "Saxofone Barítono",
+    categoria: "Saxofones",
+    nivel: NivelProgramaMinimo.OFICIALIZACAO,
+    itens: [
+      {
+        tipo: TipoConteudoPM.METODO_INSTRUMENTO,
+        descricao: "GIAMPIERI até pg.50",
+        alternativas: "AMADEU RUSSO até pg.47 OU MÉTODO PRÁTICO - Almeida Dias - até fase 25",
+        obrigatorio: true,
+        ordem: 1,
+      },
+    ],
+  },
+
+  // === METAIS ===
   // TROMPETE
   {
     instrumento: "Trompete",
+    categoria: "Metais",
     nivel: NivelProgramaMinimo.RJM,
     itens: [
       {
@@ -597,28 +613,11 @@ const programaMinimoData: ProgramaMinimoData[] = [
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 12",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Hinos 431 a 480",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "431 a 480 Voz principal",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
   {
     instrumento: "Trompete",
+    categoria: "Metais",
     nivel: NivelProgramaMinimo.CULTO,
     itens: [
       {
@@ -627,28 +626,11 @@ const programaMinimoData: ProgramaMinimoData[] = [
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 16",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
   {
     instrumento: "Trompete",
+    categoria: "Metais",
     nivel: NivelProgramaMinimo.OFICIALIZACAO,
     itens: [
       {
@@ -657,29 +639,12 @@ const programaMinimoData: ProgramaMinimoData[] = [
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA Completo com Revisão",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
   // TROMBONE
   {
     instrumento: "Trombone",
+    categoria: "Metais",
     nivel: NivelProgramaMinimo.RJM,
     itens: [
       {
@@ -688,28 +653,11 @@ const programaMinimoData: ProgramaMinimoData[] = [
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 12",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Hinos 431 a 480",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "431 a 480 Voz principal",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
   {
     instrumento: "Trombone",
+    categoria: "Metais",
     nivel: NivelProgramaMinimo.CULTO,
     itens: [
       {
@@ -718,28 +666,11 @@ const programaMinimoData: ProgramaMinimoData[] = [
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 16",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
   {
     instrumento: "Trombone",
+    categoria: "Metais",
     nivel: NivelProgramaMinimo.OFICIALIZACAO,
     itens: [
       {
@@ -748,29 +679,12 @@ const programaMinimoData: ProgramaMinimoData[] = [
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA Completo com Revisão",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
   // TUBA
   {
     instrumento: "Tuba",
+    categoria: "Metais",
     nivel: NivelProgramaMinimo.RJM,
     itens: [
       {
@@ -779,28 +693,11 @@ const programaMinimoData: ProgramaMinimoData[] = [
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 12",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Hinos 431 a 480",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "431 a 480 Voz principal",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
   {
     instrumento: "Tuba",
+    categoria: "Metais",
     nivel: NivelProgramaMinimo.CULTO,
     itens: [
       {
@@ -809,28 +706,11 @@ const programaMinimoData: ProgramaMinimoData[] = [
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 16",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
   {
     instrumento: "Tuba",
+    categoria: "Metais",
     nivel: NivelProgramaMinimo.OFICIALIZACAO,
     itens: [
       {
@@ -839,29 +719,12 @@ const programaMinimoData: ProgramaMinimoData[] = [
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA Completo com Revisão",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
-  // EUFÔNIO
+  // EUFÔNIO (Bombardino)
   {
-    instrumento: "Eufônio",
+    instrumento: "Eufônio (Bombardino)",
+    categoria: "Metais",
     nivel: NivelProgramaMinimo.RJM,
     itens: [
       {
@@ -870,28 +733,11 @@ const programaMinimoData: ProgramaMinimoData[] = [
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 12",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Hinos 431 a 480",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "431 a 480 Voz principal",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
   {
-    instrumento: "Eufônio",
+    instrumento: "Eufônio (Bombardino)",
+    categoria: "Metais",
     nivel: NivelProgramaMinimo.CULTO,
     itens: [
       {
@@ -900,28 +746,11 @@ const programaMinimoData: ProgramaMinimoData[] = [
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA até Fase 16",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
   {
-    instrumento: "Eufônio",
+    instrumento: "Eufônio (Bombardino)",
+    categoria: "Metais",
     nivel: NivelProgramaMinimo.OFICIALIZACAO,
     itens: [
       {
@@ -930,30 +759,12 @@ const programaMinimoData: ProgramaMinimoData[] = [
         obrigatorio: true,
         ordem: 1,
       },
-      {
-        tipo: TipoConteudoPM.TEORIA,
-        descricao: "MSA Completo com Revisão",
-        obrigatorio: true,
-        ordem: 2,
-      },
-      {
-        tipo: TipoConteudoPM.HINARIO,
-        descricao: "Todos os Hinos",
-        obrigatorio: true,
-        ordem: 3,
-      },
-      {
-        tipo: TipoConteudoPM.SOLFEJO,
-        descricao: "Completo Voz principal + Voz alternativa",
-        obrigatorio: true,
-        ordem: 4,
-      },
     ],
   },
 ];
 
 async function seedProgramaMinimo() {
-  console.log("🌱 Iniciando seed do Programa Mínimo...");
+  console.log("🌱 Iniciando seed do Programa Mínimo para Músicos 2023...");
 
   // Limpar dados existentes
   await prisma.programaMinimoItem.deleteMany();
@@ -964,6 +775,23 @@ async function seedProgramaMinimo() {
   const instrumentos = await prisma.instrumento.findMany();
   const instrumentoMap = new Map(instrumentos.map(i => [i.nome.toLowerCase(), i.id]));
 
+  // Criar instrumentos que não existem
+  const instrumentosNecessarios = [
+    ...new Map(programaMinimoData.map(p => [p.instrumento, p.categoria])).entries()
+  ];
+
+  for (const [nome, categoria] of instrumentosNecessarios) {
+    const nomeLower = nome.toLowerCase();
+    if (!instrumentoMap.has(nomeLower)) {
+      console.log(`➕ Criando instrumento: ${nome}`);
+      const novoInstrumento = await prisma.instrumento.create({
+        data: { nome, categoria },
+      });
+      instrumentoMap.set(nomeLower, novoInstrumento.id);
+    }
+  }
+
+  // Criar programas mínimos
   for (const programa of programaMinimoData) {
     const instrumentoId = instrumentoMap.get(programa.instrumento.toLowerCase());
 
@@ -973,7 +801,7 @@ async function seedProgramaMinimo() {
     }
 
     // Criar ProgramaMinimo
-    const programaMinimo = await prisma.programaMinimo.create({
+    await prisma.programaMinimo.create({
       data: {
         instrumentoId,
         nivel: programa.nivel,

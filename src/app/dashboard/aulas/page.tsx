@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Users, Calendar, Clock, BookOpen } from "lucide-react";
+import { Plus, Users, Calendar, Clock, BookOpen, GraduationCap } from "lucide-react";
 import { diaSemanaLabel } from "@/lib/utils";
 
 const diaSemanaOrder = [
@@ -148,31 +148,58 @@ export default async function AulasPage() {
         </Card>
       </div>
 
-      {/* Programa Mínimo Link */}
-      <Card className="bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-100">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-indigo-600" />
+      {/* Links para Programa Mínimo e Fases */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-100">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-indigo-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">
+                    Programa Mínimo para Músicos
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Consulte os requisitos por instrumento e nível
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-medium text-gray-900">
-                  Programa Mínimo para Músicos
-                </p>
-                <p className="text-sm text-gray-500">
-                  Consulte os requisitos por instrumento e nível
-                </p>
-              </div>
+              <Link href="/dashboard/aulas/programa-minimo">
+                <Button variant="outline" size="sm">
+                  Ver
+                </Button>
+              </Link>
             </div>
-            <Link href="/dashboard/aulas/programa-minimo">
-              <Button variant="outline" size="sm">
-                Ver Requisitos
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-100">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                  <GraduationCap className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">
+                    Fases do MSA
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Gerencie as fases e tópicos do Método de Solfejo
+                  </p>
+                </div>
+              </div>
+              <Link href="/dashboard/aulas/fases">
+                <Button variant="outline" size="sm">
+                  Acessar
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Grid de Turmas */}
       <div>

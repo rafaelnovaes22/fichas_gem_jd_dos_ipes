@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
     Select,
@@ -15,9 +14,17 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Loader2, Save, BookOpen } from "lucide-react";
+import { Loader2, Save, BookOpen, ListChecks, Check } from "lucide-react";
 import type { Aluno, Instrumento, Fase, ProgramaMinimo, ProgramaMinimoItem } from "@prisma/client";
+import { tipoConteudoPMColor, tipoConteudoPMLabel } from "@/lib/programa-minimo";
 
 interface SessaoFormProps {
     turmaId: string;
@@ -38,6 +45,7 @@ interface RegistroAluno {
     justificativa?: "ENFERMIDADE" | "TRABALHO" | "VIAGEM" | "OUTROS";
     anotacoes: string;
     conteudoAtribuido: string;
+    itensProgramaMinimo: string[]; // IDs dos itens selecionados
 }
 
 const justificativas = [
@@ -59,9 +67,11 @@ export function SessaoForm({ turmaId, alunos, programasMinimo }: SessaoFormProps
             ausencia: false,
             anotacoes: "",
             conteudoAtribuido: "",
+            itensProgramaMinimo: [],
         }))
     );
     const [programaExpandido, setProgramaExpandido] = useState<string | null>(null);
+    const [alunoSelecionado, setAlunoSelecionado] = useState<string | null>(null);
 
     const updateRegistro = (
         alunoId: string,
@@ -86,10 +96,48 @@ export function SessaoForm({ turmaId, alunos, programasMinimo }: SessaoFormProps
         );
     };
 
+    const toggleItemProgramaMinimo = (alunoId: string, itemId: string) => {
+        setRegistros((prev) =>
+            prev.map((r) => {
+                if (r.alunoId !== alunoId) return r;
+                const itens = r.itensProgramaMinimo.includes(itemId)
+                    ? r.itensProgramaMinimo.filter((id) => id !== itemId)
+                    : [...r.itensProgramaMinimo, itemId];
+                return { ...r, itensProgramaMinimo: itens };
+            })
+        );
+    };
+
+    const getItensSelecionadosTexto = (alunoId: string): string => {
+        const registro = registros.find((r) => r.alunoId === alunoId);
+        if (!registro || registro.itensProgramaMinimo.length === 0) return "";
+
+        const itensSelecionados: string[] = [];
+        programasMinimo.forEach((prog) => {
+            prog.itens.forEach((item) => {
+                if (registro.itensProgramaMinimo.includes(item.id)) {
+                    itensSelecionados.push(`${tipoConteudoPMLabel(item.tipo)}: ${item.descricao}`);
+                }
+            });
+        });
+
+        return itensSelecionados.join("; ");
+    };
+
     const handleSubmit = async (sincronizar = false) => {
         setIsSubmitting(true);
 
         try {
+            // Preparar registros com conteúdo do programa mínimo incluído
+            const registrosComPrograma = registros.map((r) => ({
+                alunoId: r.alunoId,
+                presenca: r.presenca,
+                ausencia: r.ausencia,
+                justificativa: r.justificativa,
+                anotacoes: r.anotacoes,
+                conteudoAtribuido: r.conteudoAtribuido || getItensSelecionadosTexto(r.alunoId),
+            }));
+
             // Criar sessão
             const response = await fetch(`/api/turmas/${turmaId}/sessoes`, {
                 method: "POST",
@@ -97,14 +145,7 @@ export function SessaoForm({ turmaId, alunos, programasMinimo }: SessaoFormProps
                 body: JSON.stringify({
                     data,
                     descricao,
-                    registros: registros.map((r) => ({
-                        alunoId: r.alunoId,
-                        presenca: r.presenca,
-                        ausencia: r.ausencia,
-                        justificativa: r.justificativa,
-                        anotacoes: r.anotacoes,
-                        conteudoAtribuido: r.conteudoAtribuido,
-                    })),
+                    registros: registrosComPrograma,
                 }),
             });
 
@@ -142,13 +183,10 @@ export function SessaoForm({ turmaId, alunos, programasMinimo }: SessaoFormProps
         }
     };
 
-    // Agrupar alunos por instrumento para o Programa Mínimo
-    const alunosPorInstrumento = alunos.reduce((acc, aluno) => {
-        const instId = aluno.instrumentoId;
-        if (!acc[instId]) acc[instId] = [];
-        acc[instId].push(aluno);
-        return acc;
-    }, {} as Record<string, typeof alunos>);
+    // Buscar programa mínimo do aluno
+    const getProgramaMinimoAluno = (aluno: Aluno) => {
+        return programasMinimo.find((p) => p.instrumentoId === aluno.instrumentoId);
+    };
 
     return (
         <div className="space-y-6">
@@ -201,11 +239,11 @@ export function SessaoForm({ turmaId, alunos, programasMinimo }: SessaoFormProps
                                     <thead>
                                         <tr className="border-b">
                                             <th className="text-left py-2 px-2">Aluno</th>
-                                            <th className="text-center py-2 px-2 w-20">P</th>
-                                            <th className="text-center py-2 px-2 w-20">F</th>
-                                            <th className="text-left py-2 px-2 w-32">Just.</th>
-                                            <th className="text-left py-2 px-2">Conteúdo</th>
-                                            <th className="text-left py-2 px-2">Observações</th>
+                                            <th className="text-center py-2 px-2 w-16">P</th>
+                                            <th className="text-center py-2 px-2 w-16">F</th>
+                                            <th className="text-left py-2 px-2 w-28">Just.</th>
+                                            <th className="text-left py-2 px-2 w-24">Prog. Mínimo</th>
+                                            <th className="text-left py-2 px-2">Conteúdo/Obs.</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y">
@@ -213,6 +251,9 @@ export function SessaoForm({ turmaId, alunos, programasMinimo }: SessaoFormProps
                                             const registro = registros.find(
                                                 (r) => r.alunoId === aluno.id
                                             )!;
+                                            const programaAluno = getProgramaMinimoAluno(aluno);
+                                            const temItensSelecionados = registro.itensProgramaMinimo.length > 0;
+
                                             return (
                                                 <tr key={aluno.id} className="hover:bg-gray-50">
                                                     <td className="py-3 px-2">
@@ -270,10 +311,106 @@ export function SessaoForm({ turmaId, alunos, programasMinimo }: SessaoFormProps
                                                         )}
                                                     </td>
                                                     <td className="py-3 px-2">
+                                                        {programaAluno ? (
+                                                            <Dialog>
+                                                                <DialogTrigger asChild>
+                                                                    <Button
+                                                                        type="button"
+                                                                        variant={temItensSelecionados ? "default" : "outline"}
+                                                                        size="sm"
+                                                                        className="w-full text-xs"
+                                                                        onClick={() => setAlunoSelecionado(aluno.id)}
+                                                                    >
+                                                                        {temItensSelecionados ? (
+                                                                            <>
+                                                                                <Check className="w-3 h-3 mr-1" />
+                                                                                {registro.itensProgramaMinimo.length}
+                                                                            </>
+                                                                        ) : (
+                                                                            <>
+                                                                                <ListChecks className="w-3 h-3 mr-1" />
+                                                                                Selecionar
+                                                                            </>
+                                                                        )}
+                                                                    </Button>
+                                                                </DialogTrigger>
+                                                                <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                                                                    <DialogHeader>
+                                                                        <DialogTitle>
+                                                                            Programa Mínimo - {aluno.nome}
+                                                                        </DialogTitle>
+                                                                    </DialogHeader>
+                                                                    <div className="space-y-4 mt-4">
+                                                                        <p className="text-sm text-gray-500">
+                                                                            Selecione os itens do programa mínimo trabalhados nesta aula:
+                                                                        </p>
+                                                                        <div className="border rounded-lg overflow-hidden">
+                                                                            <div className="bg-indigo-50 px-4 py-3">
+                                                                                <p className="font-medium text-indigo-900">
+                                                                                    {programaAluno.instrumento.nome} - {programaAluno.nivel}
+                                                                                </p>
+                                                                            </div>
+                                                                            <div className="p-4 space-y-3">
+                                                                                {programaAluno.itens.map((item) => {
+                                                                                    const selecionado = registro.itensProgramaMinimo.includes(item.id);
+                                                                                    return (
+                                                                                        <div
+                                                                                            key={item.id}
+                                                                                            className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                                                                                                selecionado
+                                                                                                    ? "bg-indigo-50 border-indigo-200"
+                                                                                                    : "hover:bg-gray-50 border-gray-200"
+                                                                                            }`}
+                                                                                            onClick={() => toggleItemProgramaMinimo(aluno.id, item.id)}
+                                                                                        >
+                                                                                            <Checkbox
+                                                                                                checked={selecionado}
+                                                                                                onCheckedChange={() => {}}
+                                                                                                className="mt-0.5"
+                                                                                            />
+                                                                                            <div className="flex-1">
+                                                                                                <div className="flex items-center gap-2 mb-1">
+                                                                                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${tipoConteudoPMColor(item.tipo)}`}>
+                                                                                                        {tipoConteudoPMLabel(item.tipo)}
+                                                                                                    </span>
+                                                                                                    {item.obrigatorio && (
+                                                                                                        <span className="text-xs text-red-500">Obrigatório</span>
+                                                                                                    )}
+                                                                                                </div>
+                                                                                                <p className="text-sm text-gray-900">
+                                                                                                    {item.descricao}
+                                                                                                </p>
+                                                                                                {item.alternativas && (
+                                                                                                    <p className="text-xs text-gray-500 mt-1">
+                                                                                                        <span className="font-medium">Alternativas:</span> {item.alternativas}
+                                                                                                    </p>
+                                                                                                )}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    );
+                                                                                })}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="flex justify-end">
+                                                                            <Button
+                                                                                type="button"
+                                                                                onClick={() => setAlunoSelecionado(null)}
+                                                                            >
+                                                                                Fechar
+                                                                            </Button>
+                                                                        </div>
+                                                                    </div>
+                                                                </DialogContent>
+                                                            </Dialog>
+                                                        ) : (
+                                                            <span className="text-xs text-gray-400">-</span>
+                                                        )}
+                                                    </td>
+                                                    <td className="py-3 px-2">
                                                         <Input
                                                             size={1}
                                                             className="text-sm"
-                                                            placeholder="Ex: Escala Dó maior"
+                                                            placeholder="Observações adicionais..."
                                                             value={registro.conteudoAtribuido}
                                                             onChange={(e) =>
                                                                 updateRegistro(
@@ -283,21 +420,11 @@ export function SessaoForm({ turmaId, alunos, programasMinimo }: SessaoFormProps
                                                                 )
                                                             }
                                                         />
-                                                    </td>
-                                                    <td className="py-3 px-2">
-                                                        <Input
-                                                            size={1}
-                                                            className="text-sm"
-                                                            placeholder="Observações..."
-                                                            value={registro.anotacoes}
-                                                            onChange={(e) =>
-                                                                updateRegistro(
-                                                                    aluno.id,
-                                                                    "anotacoes",
-                                                                    e.target.value
-                                                                )
-                                                            }
-                                                        />
+                                                        {temItensSelecionados && (
+                                                            <p className="text-xs text-indigo-600 mt-1 truncate">
+                                                                {registro.itensProgramaMinimo.length} item(s) do programa selecionado(s)
+                                                            </p>
+                                                        )}
                                                     </td>
                                                 </tr>
                                             );
@@ -309,7 +436,7 @@ export function SessaoForm({ turmaId, alunos, programasMinimo }: SessaoFormProps
                     </Card>
                 </div>
 
-                {/* Painel de Programa Mínimo */}
+                {/* Painel de Programa Mínimo - Referência */}
                 <div>
                     <Card>
                         <CardHeader>
@@ -319,10 +446,12 @@ export function SessaoForm({ turmaId, alunos, programasMinimo }: SessaoFormProps
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
+                            <p className="text-sm text-gray-500">
+                                Referência dos requisitos por instrumento. Clique em &quot;Selecionar&quot; na tabela ao lado para marcar os itens trabalhados com cada aluno.
+                            </p>
                             {programasMinimo.length === 0 ? (
                                 <p className="text-sm text-gray-500">
-                                    Nenhum programa mínimo cadastrado para os instrumentos desta
-                                    turma.
+                                    Nenhum programa mínimo cadastrado para os instrumentos desta turma.
                                 </p>
                             ) : (
                                 programasMinimo.map((programa) => (
@@ -358,25 +487,9 @@ export function SessaoForm({ turmaId, alunos, programasMinimo }: SessaoFormProps
                                                         className="text-sm"
                                                     >
                                                         <span
-                                                            className={`inline-block px-2 py-0.5 rounded text-xs mr-2 ${
-                                                                item.tipo ===
-                                                                "METODO_INSTRUMENTO"
-                                                                    ? "bg-purple-100 text-purple-700"
-                                                                    : item.tipo === "TEORIA"
-                                                                    ? "bg-indigo-100 text-indigo-700"
-                                                                    : item.tipo === "SOLFEJO"
-                                                                    ? "bg-pink-100 text-pink-700"
-                                                                    : "bg-amber-100 text-amber-700"
-                                                            }`}
+                                                            className={`inline-block px-2 py-0.5 rounded text-xs mr-2 ${tipoConteudoPMColor(item.tipo)}`}
                                                         >
-                                                            {item.tipo ===
-                                                            "METODO_INSTRUMENTO"
-                                                                ? "Método"
-                                                                : item.tipo === "TEORIA"
-                                                                ? "Teoria"
-                                                                : item.tipo === "SOLFEJO"
-                                                                ? "Solfejo"
-                                                                : "Hinário"}
+                                                            {tipoConteudoPMLabel(item.tipo)}
                                                         </span>
                                                         <span className="text-gray-700">
                                                             {item.descricao}
