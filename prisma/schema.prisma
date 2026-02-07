@@ -44,6 +44,29 @@ enum FaseOrquestra {
   OFICIALIZADO
 }
 
+enum DiaSemana {
+  DOMINGO
+  SEGUNDA
+  TERCA
+  QUARTA
+  QUINTA
+  SEXTA
+  SABADO
+}
+
+enum NivelProgramaMinimo {
+  RJM
+  CULTO
+  OFICIALIZACAO
+}
+
+enum TipoConteudoPM {
+  METODO_INSTRUMENTO
+  TEORIA
+  SOLFEJO
+  HINARIO
+}
+
 // ==========================================
 // MODELOS
 // ==========================================
@@ -75,6 +98,8 @@ model Instrutor {
   alunosSecundarios Aluno[] @relation("InstrutorSecundario")
   aulas             AulaRegistro[]
   avaliacoes        Avaliacao[]
+  turmas            Turma[]
+  sessoes           SessaoAula[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -89,6 +114,7 @@ model Instrumento {
   ativo     Boolean @default(true)
 
   alunos Aluno[]
+  programasMinimo ProgramaMinimo[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -157,6 +183,8 @@ model Aluno {
   ativo            Boolean @default(true)
 
   fichas FichaAcompanhamento[]
+  turmas TurmaAluno[]
+  sessoesRegistros SessaoAulaRegistro[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -242,4 +270,104 @@ model Avaliacao {
 
   @@unique([fichaId, numeroAvaliacao])
   @@map("avaliacoes")
+}
+
+// ==========================================
+// TURMAS E SESSÕES DE AULA
+// ==========================================
+
+model Turma {
+  id           String      @id @default(cuid())
+  nome         String
+  descricao    String?
+  instrutorId  String
+  instrutor    Instrutor   @relation(fields: [instrutorId], references: [id])
+  diaSemana    DiaSemana?
+  horario      String?
+  ativo        Boolean     @default(true)
+  alunos       TurmaAluno[]
+  sessoes      SessaoAula[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@map("turmas")
+}
+
+model TurmaAluno {
+  id        String   @id @default(cuid())
+  turmaId   String
+  turma     Turma    @relation(fields: [turmaId], references: [id], onDelete: Cascade)
+  alunoId   String
+  aluno     Aluno    @relation(fields: [alunoId], references: [id], onDelete: Cascade)
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([turmaId, alunoId])
+  @@map("turma_alunos")
+}
+
+model SessaoAula {
+  id          String   @id @default(cuid())
+  turmaId     String
+  turma       Turma    @relation(fields: [turmaId], references: [id], onDelete: Cascade)
+  data        DateTime
+  descricao   String?
+  instrutorId String
+  instrutor   Instrutor @relation(fields: [instrutorId], references: [id])
+  registros   SessaoAulaRegistro[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("sessoes_aula")
+}
+
+model SessaoAulaRegistro {
+  id            String      @id @default(cuid())
+  sessaoId      String
+  sessao        SessaoAula  @relation(fields: [sessaoId], references: [id], onDelete: Cascade)
+  alunoId       String
+  aluno         Aluno       @relation(fields: [alunoId], references: [id])
+  presenca      Boolean     @default(false)
+  ausencia      Boolean     @default(false)
+  justificativa Justificativa?
+  anotacoes     String?
+  conteudoAtribuido String?
+  sincronizadoFicha Boolean @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([sessaoId, alunoId])
+  @@map("sessao_aula_registros")
+}
+
+// ==========================================
+// PROGRAMA MÍNIMO PARA MÚSICOS
+// ==========================================
+
+model ProgramaMinimo {
+  id            String   @id @default(cuid())
+  instrumentoId String
+  instrumento   Instrumento @relation(fields: [instrumentoId], references: [id])
+  nivel         NivelProgramaMinimo
+  itens         ProgramaMinimoItem[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([instrumentoId, nivel])
+  @@map("programa_minimo")
+}
+
+model ProgramaMinimoItem {
+  id               String   @id @default(cuid())
+  programaMinimoId String
+  programaMinimo   ProgramaMinimo @relation(fields: [programaMinimoId], references: [id], onDelete: Cascade)
+  tipo             TipoConteudoPM
+  descricao        String
+  alternativas     String?
+  obrigatorio      Boolean  @default(true)
+  ordem            Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("programa_minimo_itens")
 }
