@@ -7,3 +7,8 @@ node_modules
 .next
 *.log
 *.tsbuildinfo
+
+# Playwright
+e2e/.auth/
+test-results/
+playwright-report/
