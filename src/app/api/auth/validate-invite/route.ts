@@ -9,10 +9,13 @@ export async function GET(request: NextRequest) {
     }
 
     const adminCode = process.env.ADMIN_INVITE_CODE;
+    const instructorCode = process.env.INSTRUCTOR_INVITE_CODE;
 
     if (code === adminCode) {
         return NextResponse.json({ valid: true, role: "ENCARREGADO" });
+    } else if (code === instructorCode) {
+        return NextResponse.json({ valid: true, role: "INSTRUTOR" });
+    } else {
+        return NextResponse.json({ valid: false }, { status: 400 });
     }
-
-    return NextResponse.json({ valid: false }, { status: 400 });
 }

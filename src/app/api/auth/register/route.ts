@@ -28,25 +28,48 @@ export async function POST(request: NextRequest) {
 
         const { nome, email, telefone, senha, congregacao, instrumentos, role, inviteCode } = result.data;
 
-        // Verificar código de convite se for ENCARREGADO
-        if (role === "ENCARREGADO") {
-            const adminCode = process.env.ADMIN_INVITE_CODE;
-            if (!inviteCode || inviteCode !== adminCode) {
+        // Configurações de Ambiente
+        const registrationOpen = process.env.REGISTRATION_OPEN === "true";
+        const adminCode = process.env.ADMIN_INVITE_CODE;
+        const instructorCode = process.env.INSTRUCTOR_INVITE_CODE;
+
+        // Validação de Permissões baseada no Código de Convite
+        if (inviteCode) {
+            if (inviteCode === adminCode) {
+                // Código de Admin: Permite criar tanto ENCARREGADO quanto INSTRUTOR
+                // (Sem restrições adicionais)
+            } else if (inviteCode === instructorCode) {
+                // Código de Instrutor: Permite apenas criar INSTRUTOR
+                if (role === "ENCARREGADO") {
+                    return NextResponse.json(
+                        { error: "Este código de convite não permite cadastro como Encarregado." },
+                        { status: 403 }
+                    );
+                }
+            } else {
                 return NextResponse.json(
-                    { error: "Código de convite inválido para registro como Encarregado/Admin." },
+                    { error: "Código de convite inválido." },
                     { status: 403 }
                 );
             }
-        }
+        } else {
+            // Sem código de convite
 
-        const registrationOpen = process.env.REGISTRATION_OPEN === "true";
+            // ENCARREGADO exige código sempre
+            if (role === "ENCARREGADO") {
+                return NextResponse.json(
+                    { error: "É obrigatório fornecer um código de convite válido para registro como Encarregado." },
+                    { status: 403 }
+                );
+            }
 
-        // Se for INSTRUTOR e o registro estiver FECHADO
-        if (role === "INSTRUTOR" && !registrationOpen) {
-            return NextResponse.json(
-                { error: "O cadastro de instrutores está temporariamente fechado." },
-                { status: 403 }
-            );
+            // INSTRUTOR exige que o registro esteja aberto
+            if (!registrationOpen) {
+                return NextResponse.json(
+                    { error: "O cadastro de instrutores está temporariamente fechado. Utilize um link de convite se possuir." },
+                    { status: 403 }
+                );
+            }
         }
 
         // Verificar se email já existe

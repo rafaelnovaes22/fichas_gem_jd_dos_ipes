@@ -39,6 +39,7 @@ export default function RegisterPage() {
 
     const [registrationOpen, setRegistrationOpen] = useState(true);
     const [inviteCode, setInviteCode] = useState<string | null>(null);
+    const [inviteRole, setInviteRole] = useState<string | null>(null);
 
     // Carregar dados iniciais e verificar convite
     useEffect(() => {
@@ -67,10 +68,17 @@ export default function RegisterPage() {
                     const validateResponse = await fetch(`/api/auth/validate-invite?code=${code}`);
                     if (validateResponse.ok) {
                         const data = await validateResponse.json();
-                        if (data.valid && data.role === "ENCARREGADO") {
-                            setIsEncarregado(true);
-                            // Se tem convite válido, ignora se o registro está fechado
-                            setRegistrationOpen(true);
+
+                        // O convite desbloqueia o registro
+                        setRegistrationOpen(true);
+
+                        if (data.valid) {
+                            setInviteRole(data.role);
+                            if (data.role === "ENCARREGADO") {
+                                setIsEncarregado(true);
+                            } else {
+                                setIsEncarregado(false);
+                            }
                         }
                     } else {
                         setError("Código de convite inválido ou expirado.");
@@ -358,30 +366,36 @@ export default function RegisterPage() {
                                 </>
                             )}
 
-                            {/* Opção de Encarregado - Só exibe se NÃO tiver código de convite (pois o código já define) e não existir lotação */}
-                            {!inviteCode && !encarregadoExists && !checkingEncarregado && registrationOpen && (
-                                <div className="space-y-3 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                                    <div className="flex items-start space-x-3">
-                                        <Checkbox
-                                            id="encarregado"
-                                            checked={isEncarregado}
-                                            onCheckedChange={(checked) => setIsEncarregado(checked === true)}
-                                            disabled={loading}
-                                        />
-                                        <div className="space-y-1">
-                                            <Label
-                                                htmlFor="encarregado"
-                                                className="font-medium cursor-pointer text-gray-900 dark:text-gray-100"
-                                            >
-                                                Sou Encarregado / Administrador
-                                            </Label>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                Marque esta opção se você é o Encarregado ou um dos Instrutores auxiliares com função administrativa.
-                                            </p>
+                            {/* Opção de Encarregado - Só exibe se NÃO estiver usando código de INSTRUTOR */
+                                /* Lógica: Se tem inviteCode, só mostra se inviteRole for ENCARREGADO. Se não tem invite, mostra se registro aberto. */
+                            }
+
+                            {!encarregadoExists && !checkingEncarregado && (
+                                (inviteCode && inviteRole === "ENCARREGADO") ||
+                                (!inviteCode && registrationOpen)
+                            ) && (
+                                    <div className="space-y-3 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                                        <div className="flex items-start space-x-3">
+                                            <Checkbox
+                                                id="encarregado"
+                                                checked={isEncarregado}
+                                                onCheckedChange={(checked) => setIsEncarregado(checked === true)}
+                                                disabled={loading}
+                                            />
+                                            <div className="space-y-1">
+                                                <Label
+                                                    htmlFor="encarregado"
+                                                    className="font-medium cursor-pointer text-gray-900 dark:text-gray-100"
+                                                >
+                                                    Sou Encarregado / Administrador
+                                                </Label>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                    Marque esta opção se você é o Encarregado ou um dos Instrutores auxiliares com função administrativa.
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
 
                             <div className="space-y-3">
                                 <Label>Instrumentos que leciona *</Label>
