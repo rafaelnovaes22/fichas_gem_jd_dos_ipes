@@ -215,7 +215,17 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
             );
         }
 
-        const hasHistory = (hasAulas + hasAvaliacoes + hasSessoes) > 0;
+        const hasTurmas = await prisma.turma.count({ where: { instrutorId: id } });
+        const hasAlunosTotal = await prisma.aluno.count({
+            where: {
+                OR: [
+                    { instrutorId: id },
+                    { instrutor2Id: id }
+                ]
+            }
+        });
+
+        const hasHistory = (hasAulas + hasAvaliacoes + hasSessoes + hasTurmas + hasAlunosTotal) > 0;
 
         if (hasHistory) {
             // Soft Delete: Apenas desativa o usuário
