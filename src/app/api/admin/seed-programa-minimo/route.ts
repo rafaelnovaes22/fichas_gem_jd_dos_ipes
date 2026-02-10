@@ -876,24 +876,103 @@ export async function POST() {
             }
         }
 
+        // Itens comuns a TODOS os instrumentos por nível
+        const itensComuns: Record<NivelProgramaMinimo, { tipo: TipoConteudoPM; descricao: string; obrigatorio: boolean; ordem: number }[]> = {
+            [NivelProgramaMinimo.RJM]: [
+                {
+                    tipo: TipoConteudoPM.TEORIA,
+                    descricao: "Método Simplificado de Aprendizagem Musical (MSA) – 2023 – Até FASE 12",
+                    obrigatorio: true,
+                    ordem: 10,
+                },
+                {
+                    tipo: TipoConteudoPM.SOLFEJO,
+                    descricao: "Hinos 431 a 480",
+                    obrigatorio: true,
+                    ordem: 11,
+                },
+                {
+                    tipo: TipoConteudoPM.HINARIO,
+                    descricao: "431 a 480 – Voz principal",
+                    obrigatorio: true,
+                    ordem: 12,
+                },
+            ],
+            [NivelProgramaMinimo.CULTO]: [
+                {
+                    tipo: TipoConteudoPM.TEORIA,
+                    descricao: "Método Simplificado de Aprendizagem Musical (MSA) – 2023 – Até Fase 16",
+                    obrigatorio: true,
+                    ordem: 10,
+                },
+                {
+                    tipo: TipoConteudoPM.SOLFEJO,
+                    descricao: "Todos os Hinos",
+                    obrigatorio: true,
+                    ordem: 11,
+                },
+                {
+                    tipo: TipoConteudoPM.HINARIO,
+                    descricao: "Completo – Voz principal + Voz alternativa",
+                    obrigatorio: true,
+                    ordem: 12,
+                },
+            ],
+            [NivelProgramaMinimo.OFICIALIZACAO]: [
+                {
+                    tipo: TipoConteudoPM.TEORIA,
+                    descricao: "Método Simplificado de Aprendizagem Musical (MSA) – 2023 – Completo com Revisão",
+                    obrigatorio: true,
+                    ordem: 10,
+                },
+                {
+                    tipo: TipoConteudoPM.SOLFEJO,
+                    descricao: "Todos os Hinos",
+                    obrigatorio: true,
+                    ordem: 11,
+                },
+                {
+                    tipo: TipoConteudoPM.HINARIO,
+                    descricao: "Completo – Voz principal + Voz alternativa",
+                    obrigatorio: true,
+                    ordem: 12,
+                },
+            ],
+        };
+
         // Criar programas mínimos
         let count = 0;
         for (const programa of programaMinimoData) {
             const instrumentoId = instrumentoMap.get(programa.instrumento.toLowerCase());
             if (!instrumentoId) continue;
 
+            // Itens específicos do instrumento
+            const itensEspecificos = programa.itens.map(item => ({
+                tipo: item.tipo,
+                descricao: item.descricao,
+                alternativas: item.alternativas || null,
+                obrigatorio: item.obrigatorio,
+                ordem: item.ordem,
+            }));
+
+            // Itens comuns (TEORIA + SOLFEJO para todos, HINÁRIO para todos exceto Violino)
+            const isViolino = programa.instrumento.toLowerCase() === "violino";
+            const comuns = itensComuns[programa.nivel]
+                .filter(item => !(isViolino && item.tipo === TipoConteudoPM.HINARIO))
+                .map(item => ({
+                    tipo: item.tipo,
+                    descricao: item.descricao,
+                    alternativas: null,
+                    obrigatorio: item.obrigatorio,
+                    ordem: item.ordem,
+                }));
+
             await prisma.programaMinimo.create({
                 data: {
                     instrumentoId,
                     nivel: programa.nivel,
                     itens: {
-                        create: programa.itens.map(item => ({
-                            tipo: item.tipo,
-                            descricao: item.descricao,
-                            alternativas: item.alternativas || null,
-                            obrigatorio: item.obrigatorio,
-                            ordem: item.ordem,
-                        })),
+                        create: [...itensEspecificos, ...comuns],
                     },
                 },
             });
