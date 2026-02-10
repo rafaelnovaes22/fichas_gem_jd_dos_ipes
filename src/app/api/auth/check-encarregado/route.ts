@@ -16,11 +16,11 @@ export async function GET() {
 
         const registrationOpen = process.env.REGISTRATION_OPEN === "true";
 
-        // Permitir até 4 Encarregados/Admins (1 titular + 3 auxiliares)
+        // Permitir apenas 1 Encarregado (Titular)
         return NextResponse.json({
-            exists: encarregadoCount >= 4,
+            exists: encarregadoCount >= 1,
             count: encarregadoCount,
-            limit: 4,
+            limit: 1,
             registrationOpen
         });
     } catch (error) {

@@ -117,10 +117,10 @@ export async function POST(request: NextRequest) {
                     congregacao: congregacao
                 }
             });
-
-            if (encarregadoCount >= 4) {
+            // Limite de 1 (apenas o titular)
+            if (encarregadoCount >= 1) {
                 return NextResponse.json(
-                    { error: `Limite de Encarregados (4) atingido para a congregação ${congregacao}` },
+                    { error: `Já existe um Encarregado cadastrado para a congregação ${congregacao}.` },
                     { status: 400 }
                 );
             }
