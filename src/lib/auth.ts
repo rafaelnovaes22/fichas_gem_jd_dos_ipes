@@ -50,6 +50,8 @@ export const authOptions: NextAuthOptions = {
                 token.id = user.id;
                 token.role = user.role;
                 token.instrutorId = user.instrutorId;
+                token.name = user.name;
+                token.email = user.email;
             }
             return token;
         },
@@ -58,6 +60,8 @@ export const authOptions: NextAuthOptions = {
                 session.user.id = token.id as string;
                 session.user.role = token.role as string;
                 session.user.instrutorId = token.instrutorId as string | null;
+                session.user.name = token.name as string;
+                session.user.email = token.email as string;
             }
             return session;
         },

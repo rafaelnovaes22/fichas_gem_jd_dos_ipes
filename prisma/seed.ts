@@ -34,30 +34,19 @@ async function main() {
 
     console.log("✅ Encarregado de Orquestra criado:", encarregado.email);
 
-    // Criar usuário instrutor de exemplo
-    const instrutorUser = await prisma.usuario.upsert({
-        where: { email: "instrutor@gem.com.br" },
-        update: {},
-        create: {
-            email: "instrutor@gem.com.br",
-            senha: senhaHash,
-            nome: "João Silva",
-            role: "INSTRUTOR",
-            telefone: "(11) 99999-1111",
-        },
-    });
 
-    const instrutor = await prisma.instrutor.upsert({
-        where: { usuarioId: instrutorUser.id },
-        update: {},
-        create: {
-            usuarioId: instrutorUser.id,
-            congregacao: "Jardim dos Ipês",
-            instrumentos: ["Violino", "Viola"],
-        },
-    });
+    // Limpeza de dados de exemplo antigos (João Silva e Maria Santos)
+    console.log("🧹 Limpando dados de exemplo...");
+    try {
+        // Tentar remover aluno exemplo
+        await prisma.aluno.deleteMany({ where: { email: "maria.santos@email.com" } }).catch(() => { });
+        // Tentar remover instrutor exemplo (cascata deleta instrutor profile)
+        await prisma.usuario.delete({ where: { email: "instrutor@gem.com.br" } }).catch(() => { });
+        console.log("✅ Dados de exemplo removidos.");
+    } catch (e) {
+        console.error("⚠️ Erro não crítico na limpeza:", e);
+    }
 
-    console.log("✅ Instrutor criado:", instrutorUser.nome);
 
     // Criar instrumentos de exemplo
     // Criar instrumentos oficiais (MOO - Manual de Orientação Orquestral)
@@ -109,6 +98,8 @@ async function main() {
 
     console.log("✅ Instrumentos criados:", instrumentos.length);
 
+
+
     // Criar Fases e Tópicos MSA (Baseado nas imagens)
     const fasesMsa = [
         {
@@ -137,6 +128,11 @@ async function main() {
                 { numero: "2.6", titulo: "Forma de realização dos exercícios rítmicos" },
             ]
         },
+
+
+
+
+
         {
             nome: "Fase 3",
             descricao: "Leitura Rítmica e Métrica",
@@ -357,44 +353,13 @@ async function main() {
         console.log("✅ Programa Mínimo criado para Violino");
     }
 
-    // Criar aluno de exemplo
-    const violino = await prisma.instrumento.findUnique({
-        where: { nome: "Violino" },
-    });
-    const fase1 = await prisma.fase.findUnique({
-        where: { nome: "Fase 1" },
-    });
 
-    if (violino && fase1) {
-        const aluno = await prisma.aluno.create({
-            data: {
-                nome: "Maria Santos",
-                dataNascimento: new Date("2010-05-15"),
-                telefone: "(11) 98888-0000",
-                email: "maria.santos@email.com",
-                congregacao: "São Paulo - Central",
-                instrutorId: instrutor.id,
-                instrumentoId: violino.id,
-                faseId: fase1.id,
-                autorizacaoDados: true,
-            },
-        });
+    // Dados de aluno de exemplo removidos para produção limpa.
 
-        // Criar ficha de acompanhamento para o aluno
-        await prisma.fichaAcompanhamento.create({
-            data: {
-                alunoId: aluno.id,
-                tipoAula: "TEORIA_MUSICAL",
-            },
-        });
-
-        console.log("✅ Aluno de exemplo criado:", aluno.nome);
-    }
 
     console.log("\n🎉 Seed concluído com sucesso!");
     console.log("\n📋 Credenciais de acesso:");
-    console.log("  Admin: admin@gem.com.br / admin123");
-    console.log("  Instrutor: instrutor@gem.com.br / admin123");
+    console.log("  Admin: encarregado@gem.com.br / admin123");
 }
 
 main()
