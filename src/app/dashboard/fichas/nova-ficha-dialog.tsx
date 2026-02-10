@@ -23,12 +23,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
-import { Combobox } from "@/components/ui/combobox";
-// Assuming Combobox exists or using a simple Select if not. 
-// For now, I'll use a simple Select for students to keep it simple, 
-// but if the list is long, a Combobox is better. 
-// Given the current imports, I'll stick to native Select for simplicity in this artifact,
-// but I'll check if a Combobox component exists.
 
 interface AlunoOption {
     id: string;
