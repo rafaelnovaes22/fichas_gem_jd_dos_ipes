@@ -11,6 +11,7 @@ const registerSchema = z.object({
     congregacao: z.string().min(1, "Congregação é obrigatória"),
     instrumentos: z.array(z.string()).min(1, "Selecione pelo menos um instrumento"),
     role: z.enum(["INSTRUTOR", "ENCARREGADO"]).optional().default("INSTRUTOR"),
+    inviteCode: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -25,7 +26,28 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { nome, email, telefone, senha, congregacao, instrumentos, role } = result.data;
+        const { nome, email, telefone, senha, congregacao, instrumentos, role, inviteCode } = result.data;
+
+        // Verificar código de convite se for ENCARREGADO
+        if (role === "ENCARREGADO") {
+            const adminCode = process.env.ADMIN_INVITE_CODE;
+            if (!inviteCode || inviteCode !== adminCode) {
+                return NextResponse.json(
+                    { error: "Código de convite inválido para registro como Encarregado/Admin." },
+                    { status: 403 }
+                );
+            }
+        }
+
+        const registrationOpen = process.env.REGISTRATION_OPEN === "true";
+
+        // Se for INSTRUTOR e o registro estiver FECHADO
+        if (role === "INSTRUTOR" && !registrationOpen) {
+            return NextResponse.json(
+                { error: "O cadastro de instrutores está temporariamente fechado." },
+                { status: 403 }
+            );
+        }
 
         // Verificar se email já existe
         const existingUser = await prisma.usuario.findUnique({

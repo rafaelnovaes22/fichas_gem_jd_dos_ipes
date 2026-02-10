@@ -14,11 +14,14 @@ export async function GET() {
             },
         });
 
+        const registrationOpen = process.env.REGISTRATION_OPEN === "true";
+
         // Permitir até 4 Encarregados/Admins (1 titular + 3 auxiliares)
         return NextResponse.json({
             exists: encarregadoCount >= 4,
             count: encarregadoCount,
-            limit: 4
+            limit: 4,
+            registrationOpen
         });
     } catch (error) {
         console.error("Erro ao verificar encarregado:", error);

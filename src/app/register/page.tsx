@@ -37,37 +37,63 @@ export default function RegisterPage() {
     const [encarregadoExists, setEncarregadoExists] = useState(false);
     const [checkingEncarregado, setCheckingEncarregado] = useState(true);
 
-    useEffect(() => {
-        async function fetchInstrumentos() {
-            try {
-                const response = await fetch("/api/instrumentos");
-                if (response.ok) {
-                    const data = await response.json();
-                    setInstrumentos(data);
-                }
-            } catch (error) {
-                console.error("Erro ao carregar instrumentos:", error);
-            }
-        }
-        fetchInstrumentos();
-    }, []);
+    const [registrationOpen, setRegistrationOpen] = useState(true);
+    const [inviteCode, setInviteCode] = useState<string | null>(null);
 
-    // Verificar se já existe ENCARREGADO
+    // Carregar dados iniciais e verificar convite
     useEffect(() => {
-        async function checkEncarregado() {
+        async function loadInitialData() {
+            // Ler parâmetros da URL
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get("invite");
+            setInviteCode(code);
+
+            // Verificar Encarregado e Status de Registro
             try {
-                const response = await fetch("/api/auth/check-encarregado");
-                if (response.ok) {
-                    const data = await response.json();
+                // Verificar se já existe (para esconder checkbox se for público)
+                const checkResponse = await fetch("/api/auth/check-encarregado");
+                if (checkResponse.ok) {
+                    const data = await checkResponse.json();
                     setEncarregadoExists(data.exists);
+
+                    // Se o backend retornar o status de registro, usar
+                    if (data.registrationOpen !== undefined) {
+                        setRegistrationOpen(data.registrationOpen);
+                    }
+                }
+
+                // Se tiver código de convite, validar
+                if (code) {
+                    const validateResponse = await fetch(`/api/auth/validate-invite?code=${code}`);
+                    if (validateResponse.ok) {
+                        const data = await validateResponse.json();
+                        if (data.valid && data.role === "ENCARREGADO") {
+                            setIsEncarregado(true);
+                            // Se tem convite válido, ignora se o registro está fechado
+                            setRegistrationOpen(true);
+                        }
+                    } else {
+                        setError("Código de convite inválido ou expirado.");
+                    }
+                } else {
+                    // Sem código: se registro fechado, avisar usuário
+                    // (O estado registrationOpen será atualizado pelo check-encarregado acima)
                 }
             } catch (error) {
-                console.error("Erro ao verificar encarregado:", error);
+                console.error("Erro ao carregar dados:", error);
             } finally {
                 setCheckingEncarregado(false);
             }
         }
-        checkEncarregado();
+
+        loadInitialData();
+
+        // Carregar instrumentos em paralelo
+        fetch("/api/instrumentos")
+            .then(res => res.ok ? res.json() : [])
+            .then(setInstrumentos)
+            .catch(console.error);
+
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,6 +146,7 @@ export default function RegisterPage() {
                     congregacao: CONGREGACAO_FIXA,
                     instrumentos: instrumentosSelecionados,
                     role: isEncarregado ? "ENCARREGADO" : "INSTRUTOR",
+                    inviteCode: inviteCode || undefined,
                 }),
             });
 
@@ -316,8 +343,23 @@ export default function RegisterPage() {
                             </div>
 
                             {/* Opção de Encarregado */}
-                            {/* Opção de Encarregado - Só exibe se não existir um cadastrado */}
-                            {!encarregadoExists && !checkingEncarregado && (
+                            {/* Mensagem de Cadastro Fechado */}
+                            {!registrationOpen && !inviteCode && (
+                                <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded-lg border border-yellow-200 dark:border-yellow-800 text-center">
+                                    <p className="font-medium">O cadastro de novos instrutores está temporariamente fechado.</p>
+                                    <p className="text-sm mt-1">Entre em contato com a administração se você possui um convite.</p>
+                                </div>
+                            )}
+
+                            {/* Só mostra formulário se estiver aberto ou tiver convite válido (que abre o registro) */}
+                            {(registrationOpen || (inviteCode && isEncarregado)) && (
+                                <>
+                                    {/* ... campos do formulário ... */}
+                                </>
+                            )}
+
+                            {/* Opção de Encarregado - Só exibe se NÃO tiver código de convite (pois o código já define) e não existir lotação */}
+                            {!inviteCode && !encarregadoExists && !checkingEncarregado && registrationOpen && (
                                 <div className="space-y-3 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
                                     <div className="flex items-start space-x-3">
                                         <Checkbox
