@@ -1,0 +1,89 @@
+﻿node.exe : ÔÜá Warning: 
+Next.js inferred your 
+workspace root, but it may not 
+be correct.
+No linha:1 caractere:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~
+    + CategoryInfo          :  
+   NotSpecified: (ÔÜá Warning  
+  : Ne...not be correct.:Str   
+ ing) [], RemoteException
+    + FullyQualifiedErrorId :  
+   NativeCommandError
+ 
+ We detected multiple 
+lockfiles and selected the 
+directory of C:\Users\Rafael\Pr
+ojetos\package-lock.json as 
+the root directory.
+ To silence this warning, set 
+`turbopack.root` in your 
+Next.js config, or consider 
+removing one of the lockfiles 
+if it's not needed.
+   See https://nextjs.org/docs/
+app/api-reference/config/next-c
+onfig-js/turbopack#root-directo
+ry for more information.
+ Detected additional 
+lockfiles: 
+   * C:\Users\Rafael\Projetos\F
+ichas_GEM\package-lock.json
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+- Experiments (use with caution):
+  ┬À serverActions
+
+  Creating an optimized production build ...
+Ô£ô Compiled successfully in 2.6s
+  Running TypeScript ...
+Failed to compile.
+
+./src/components/ui/password-in
+put.tsx:4:17
+Type error: Module 
+'"@/components/ui/input"' has 
+no exported member 
+'InputProps'.
+
+[0m [90m 2 |[39m 
+[36mimport[39m { 
+[33mEye[39m[33m,[39m 
+[33mEyeOff[39m } 
+[36mfrom[39m [32m"lucide-rea
+ct"[39m[33m;[39m
+ [90m 3 |[39m 
+[36mimport[39m { 
+[33mButton[39m } 
+[36mfrom[39m [32m"@/componen
+ts/ui/button"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 
+|[39m [36mimport[39m { 
+[33mInput[39m[33m,[39m 
+[33mInputProps[39m } 
+[36mfrom[39m [32m"@/componen
+ts/ui/input"[39m[33m;[39m
+ [90m   |[39m                
+ [31m[1m^[22m[39m
+ [90m 5 |[39m 
+[36mimport[39m { cn } 
+[36mfrom[39m [32m"@/lib/util
+s"[39m[33m;[39m
+ [90m 6 |[39m
+ [90m 7 |[39m 
+[36mconst[39m 
+[33mPasswordInput[39m 
+[33m=[39m [33mReact[39m[33
+m.[39mforwardRef[33m<[39m[3
+3mHTMLInputElement[39m[33m,[
+39m [33mInputProps[39m[33m>
+[39m([0m
+Next.js build worker exited 
+with code: 1 and signal: null

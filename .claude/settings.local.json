@@ -5,7 +5,19 @@
       "Bash(npm install:*)",
       "Bash(npx prisma migrate dev:*)",
       "Bash(npx:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(docker compose:*)",
+      "Bash(del \"C:\\\\Users\\\\Rafael\\\\projetos\\\\fichas_gem\\\\prisma\\\\verify-cleanup.ts\")",
+      "Bash(del \"C:\\\\Users\\\\Rafael\\\\projetos\\\\fichas_gem\\\\prisma\\\\cleanup-e2e-production.ts\")",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAtualiza testes E2E com Playwright - 98/100 passando\n\n- Configura testes para usar PostgreSQL local via Docker \\(porta 5434\\)\n- Atualiza todos os testes E2E com padrões consistentes\n- Adiciona docker-compose.test.yml para banco de testes\n- Adiciona script scripts/e2e-setup.ts para setup automatizado\n- Atualiza package.json com scripts de teste \\(test:db:up, test:e2e, etc\\)\n- Configura porta 3001 para evitar conflito com servidor de dev\n- Ajusta timeouts e configurações do Playwright\n\nNota: 2 testes falham devido a erro SSR no PDFDownloadLink \\(conhecido\\)\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(npm run test:e2e:*)",
+      "Bash(npm run dev)",
+      "Bash(curl:*)",
+      "Bash(start:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdiciona Programa Mínimo e CRUD de Fases do MSA\n\n- Programa Mínimo para Músicos 2023 com dados oficiais da CCB\n- Página de consulta por categoria \\(Cordas, Madeiras, Saxofones, Metais\\)\n- Seed atualizado com 54 programas \\(18 instrumentos x 3 níveis\\)\n- CRUD completo de Fases do MSA \\(criar, editar, excluir\\)\n- CRUD de Tópicos dentro de cada fase\n- API routes para gerenciamento de fases e tópicos\n- Links no menu de aulas para Programa Mínimo e Fases\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)"
     ]
   }
 }
