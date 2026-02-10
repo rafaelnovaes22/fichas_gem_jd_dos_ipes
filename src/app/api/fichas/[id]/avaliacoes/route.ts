@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions, isAdmin as checkIsAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
             return NextResponse.json({ error: "Ficha não encontrada" }, { status: 404 });
         }
 
-        const isAdmin = session.user.role === "ADMIN";
+        const isAdmin = checkIsAdmin(session.user.role);
         if (!isAdmin && ficha.aluno.instrutor.usuarioId !== session.user.id) {
             return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
         }

@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BackButton } from "@/components/ui/back-button";
 import { ArrowLeft } from "lucide-react";
 import { SessaoForm } from "./form";
 
@@ -72,11 +73,7 @@ export default async function SessaoPage({ params }: PageProps) {
         <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center gap-4">
-                <Link href={`/dashboard/aulas/turmas/${id}`}>
-                    <Button variant="outline" size="icon">
-                        <ArrowLeft className="w-4 h-4" />
-                    </Button>
-                </Link>
+                <BackButton />
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Registrar Aula</h1>
                     <p className="text-gray-500">{turma.nome}</p>

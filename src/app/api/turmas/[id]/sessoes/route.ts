@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions, isAdmin as checkIsAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const isAdmin = session.user.role === "ADMIN";
+    const isAdmin = checkIsAdmin(session.user.role);
     const isOwner = turma.instrutor.usuarioId === session.user.id;
 
     if (!isAdmin && !isOwner) {
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const isAdmin = session.user.role === "ADMIN";
+    const isAdmin = checkIsAdmin(session.user.role);
     const isOwner = turma.instrutor.usuarioId === session.user.id;
 
     if (!isAdmin && !isOwner) {
@@ -120,15 +120,15 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         instrutorId: turma.instrutorId,
         registros: data.registros?.length
           ? {
-              create: data.registros.map((r) => ({
-                alunoId: r.alunoId,
-                presenca: r.presenca,
-                ausencia: r.ausencia,
-                justificativa: r.justificativa,
-                anotacoes: r.anotacoes,
-                conteudoAtribuido: r.conteudoAtribuido,
-              })),
-            }
+            create: data.registros.map((r) => ({
+              alunoId: r.alunoId,
+              presenca: r.presenca,
+              ausencia: r.ausencia,
+              justificativa: r.justificativa,
+              anotacoes: r.anotacoes,
+              conteudoAtribuido: r.conteudoAtribuido,
+            })),
+          }
           : undefined,
       },
       include: {

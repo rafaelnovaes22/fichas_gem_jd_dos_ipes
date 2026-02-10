@@ -48,6 +48,29 @@ export async function POST(request: NextRequest) {
             }
         }
 
+        // Validação de unicidade por ano
+        const today = new Date();
+        const startOfYear = new Date(today.getFullYear(), 0, 1);
+        const endOfYear = new Date(today.getFullYear(), 11, 31, 23, 59, 59);
+
+        const existingFicha = await prisma.fichaAcompanhamento.findFirst({
+            where: {
+                alunoId: data.alunoId,
+                tipoAula: data.tipoAula,
+                createdAt: {
+                    gte: startOfYear,
+                    lte: endOfYear,
+                },
+            },
+        });
+
+        if (existingFicha) {
+            return NextResponse.json(
+                { error: `O aluno já possui uma ficha de ${data.tipoAula} neste ano.` },
+                { status: 400 }
+            );
+        }
+
         const ficha = await prisma.fichaAcompanhamento.create({
             data: {
                 alunoId: data.alunoId,

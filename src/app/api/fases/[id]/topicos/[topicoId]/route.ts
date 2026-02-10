@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions, isAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -48,7 +48,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         const session = await getServerSession(authOptions);
         const { id, topicoId } = await params;
 
-        if (!session || session.user.role !== "ADMIN") {
+        if (!session || !isAdmin(session.user.role)) {
             return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
         }
 
@@ -107,7 +107,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         const session = await getServerSession(authOptions);
         const { topicoId } = await params;
 
-        if (!session || session.user.role !== "ADMIN") {
+        if (!session || !isAdmin(session.user.role)) {
             return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
         }
 

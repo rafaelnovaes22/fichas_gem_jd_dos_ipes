@@ -6,22 +6,33 @@ const prisma = new PrismaClient();
 async function main() {
     console.log("🌱 Iniciando seed do banco de dados...");
 
-    // Criar usuário admin
+    // Criar usuário ENCARREGADO (administrador principal, único por congregação)
     const senhaHash = await bcrypt.hash("admin123", 10);
 
-    const admin = await prisma.usuario.upsert({
-        where: { email: "admin@gem.com.br" },
+    const encarregado = await prisma.usuario.upsert({
+        where: { email: "encarregado@gem.com.br" },
         update: {},
         create: {
-            email: "admin@gem.com.br",
+            email: "encarregado@gem.com.br",
             senha: senhaHash,
-            nome: "Administrador",
-            role: "ADMIN",
+            nome: "Encarregado de Orquestra",
+            role: "ENCARREGADO",
             telefone: "(11) 99999-0000",
         },
     });
 
-    console.log("✅ Usuário admin criado:", admin.email);
+    // Criar registro de Instrutor para o ENCARREGADO (ele também pode ensinar)
+    await prisma.instrutor.upsert({
+        where: { usuarioId: encarregado.id },
+        update: {},
+        create: {
+            usuarioId: encarregado.id,
+            congregacao: "Jardim dos Ipês",
+            instrumentos: ["Violino"],
+        },
+    });
+
+    console.log("✅ Encarregado de Orquestra criado:", encarregado.email);
 
     // Criar usuário instrutor de exemplo
     const instrutorUser = await prisma.usuario.upsert({
@@ -41,7 +52,7 @@ async function main() {
         update: {},
         create: {
             usuarioId: instrutorUser.id,
-            congregacao: "São Paulo - Central",
+            congregacao: "Jardim dos Ipês",
             instrumentos: ["Violino", "Viola"],
         },
     });
@@ -309,6 +320,42 @@ async function main() {
     }
 
     console.log("✅ Fases e Tópicos MSA criados:", fasesMsa.length);
+
+    // Criar Programa Mínimo para Violino
+    const violinoParaPM = await prisma.instrumento.findUnique({
+        where: { nome: "Violino" },
+    });
+
+    if (violinoParaPM) {
+        const niveis = ["RJM", "CULTO", "OFICIALIZACAO"] as const;
+
+        for (const nivel of niveis) {
+            const pm = await prisma.programaMinimo.upsert({
+                where: {
+                    instrumentoId_nivel: {
+                        instrumentoId: violinoParaPM.id,
+                        nivel: nivel
+                    }
+                },
+                update: {},
+                create: {
+                    instrumentoId: violinoParaPM.id,
+                    nivel: nivel,
+                }
+            });
+
+            // Adicionar itens de exemplo
+            await prisma.programaMinimoItem.create({
+                data: {
+                    programaMinimoId: pm.id,
+                    tipo: "METODO_INSTRUMENTO",
+                    descricao: `Método ${nivel} para Violino`,
+                    obrigatorio: true,
+                }
+            });
+        }
+        console.log("✅ Programa Mínimo criado para Violino");
+    }
 
     // Criar aluno de exemplo
     const violino = await prisma.instrumento.findUnique({

@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
+import { AuthProvider } from "@/components/providers/auth-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "GEM - Gestão de Ensino Musical",
+    title: "GGEM - Gestão de Grupo de Ensino Musical",
     description: "Sistema de acompanhamento de alunos de música da Congregação Cristã no Brasil",
 };
 
@@ -16,10 +18,19 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="pt-BR">
+        <html lang="pt-BR" suppressHydrationWarning>
             <body className={inter.className}>
-                {children}
-                <Toaster position="top-right" richColors />
+                <AuthProvider>
+                    <ThemeProvider
+                        attribute="class"
+                        defaultTheme="light"
+                        enableSystem={false}
+                        disableTransitionOnChange
+                    >
+                        {children}
+                        <Toaster position="top-right" richColors />
+                    </ThemeProvider>
+                </AuthProvider>
             </body>
         </html>
     );

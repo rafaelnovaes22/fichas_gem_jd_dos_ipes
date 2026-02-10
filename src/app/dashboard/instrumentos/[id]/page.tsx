@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BackButton } from "@/components/ui/back-button";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import { use } from "react";
 
@@ -102,11 +103,7 @@ export default function EditarInstrumentoPage({ params }: PageProps) {
         <div className="max-w-lg mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <Link href="/dashboard/instrumentos">
-                        <Button variant="ghost" size="icon">
-                            <ArrowLeft className="w-4 h-4" />
-                        </Button>
-                    </Link>
+                    <BackButton />
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Editar Instrumento</h1>
                         <p className="text-gray-500">{nome}</p>

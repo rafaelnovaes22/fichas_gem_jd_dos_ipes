@@ -11,8 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
+import { BackButton } from "@/components/ui/back-button";
 
 const faseOrquestraOptions = [
+    { value: "ESTUDANDO", label: "Estudando (Iniciante)" },
+    { value: "ENSAIO_LOCAL", label: "Ensaio (GEM)" },
     { value: "ENSAIO", label: "Ensaio" },
     { value: "RJM", label: "RJM" },
     { value: "CULTO", label: "Culto" },
@@ -22,15 +25,17 @@ const faseOrquestraOptions = [
     { value: "OFICIALIZADO", label: "Oficializado" },
 ] as const;
 
+const CONGREGACAO_FIXA = "Jardim dos Ipês";
+
 const alunoSchema = z.object({
     nome: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
     dataNascimento: z.string().optional(),
     telefone: z.string().optional(),
     email: z.string().email("Email inválido").optional().or(z.literal("")),
-    congregacao: z.string().min(1, "Congregação é obrigatória"),
+    congregacao: z.string().default(CONGREGACAO_FIXA).optional(),
     instrumentoId: z.string().min(1, "Selecione um instrumento"),
     faseId: z.string().min(1, "Selecione uma fase"),
-    faseOrquestra: z.enum(["ENSAIO", "RJM", "CULTO", "TROCA_INSTRUMENTO_CULTO", "TROCA_INSTRUMENTO_OFICIALIZACAO", "OFICIALIZACAO", "OFICIALIZADO"]),
+    faseOrquestra: z.enum(["ESTUDANDO", "ENSAIO_LOCAL", "ENSAIO", "RJM", "CULTO", "TROCA_INSTRUMENTO_CULTO", "TROCA_INSTRUMENTO_OFICIALIZACAO", "OFICIALIZACAO", "OFICIALIZADO"]),
     instrutor2Id: z.string().optional(),
     autorizacaoDados: z.boolean(),
 });
@@ -59,10 +64,10 @@ export function NovoAlunoForm({ instrumentos, fases, instrutores }: NovoAlunoFor
             dataNascimento: "",
             telefone: "",
             email: "",
-            congregacao: "",
+            congregacao: CONGREGACAO_FIXA,
             instrumentoId: "",
             faseId: "",
-            faseOrquestra: "ENSAIO",
+            faseOrquestra: "ESTUDANDO",
             instrutor2Id: "",
             autorizacaoDados: false,
         },
@@ -72,11 +77,17 @@ export function NovoAlunoForm({ instrumentos, fases, instrutores }: NovoAlunoFor
         setLoading(true);
         setError("");
 
+        // Garantir que a congregação seja sempre a fixa
+        const payload = {
+            ...data,
+            congregacao: CONGREGACAO_FIXA,
+        };
+
         try {
             const response = await fetch("/api/alunos", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
+                body: JSON.stringify(payload),
             });
 
             if (!response.ok) {
@@ -96,15 +107,13 @@ export function NovoAlunoForm({ instrumentos, fases, instrutores }: NovoAlunoFor
     return (
         <div className="max-w-2xl mx-auto space-y-6">
             {/* Header */}
+            {/* Header */}
+            {/* Header */}
             <div className="flex items-center gap-4">
-                <Link href="/dashboard/alunos">
-                    <Button variant="ghost" size="icon">
-                        <ArrowLeft className="w-4 h-4" />
-                    </Button>
-                </Link>
+                <BackButton />
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Novo Aluno</h1>
-                    <p className="text-gray-500">Cadastre um novo aluno no sistema</p>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Novo Aluno</h1>
+                    <p className="text-gray-500 dark:text-gray-400">Cadastre um novo aluno no sistema</p>
                 </div>
             </div>
 
@@ -116,7 +125,7 @@ export function NovoAlunoForm({ instrumentos, fases, instrutores }: NovoAlunoFor
                 <CardContent>
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                         {error && (
-                            <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-200">
+                            <div className="p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/10 rounded-lg border border-red-200 dark:border-red-800">
                                 {error}
                             </div>
                         )}
@@ -140,6 +149,7 @@ export function NovoAlunoForm({ instrumentos, fases, instrutores }: NovoAlunoFor
                                     id="dataNascimento"
                                     type="date"
                                     {...register("dataNascimento")}
+                                    className="dark:invert-0 dark:[color-scheme:dark]"
                                 />
                             </div>
 
@@ -166,15 +176,10 @@ export function NovoAlunoForm({ instrumentos, fases, instrutores }: NovoAlunoFor
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="congregacao">Congregação *</Label>
-                                <Input
-                                    id="congregacao"
-                                    {...register("congregacao")}
-                                    placeholder="Nome da congregação"
-                                />
-                                {errors.congregacao && (
-                                    <p className="text-sm text-red-500">{errors.congregacao.message}</p>
-                                )}
+                                <Label>Congregação</Label>
+                                <div className="h-10 px-3 py-2 border rounded-md bg-gray-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 flex items-center border-input">
+                                    {CONGREGACAO_FIXA}
+                                </div>
                             </div>
 
                             <div className="space-y-2">
@@ -255,9 +260,9 @@ export function NovoAlunoForm({ instrumentos, fases, instrutores }: NovoAlunoFor
                                 type="checkbox"
                                 id="autorizacaoDados"
                                 {...register("autorizacaoDados")}
-                                className="h-4 w-4 rounded border-gray-300"
+                                className="h-4 w-4 rounded border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:focus:ring-offset-zinc-900"
                             />
-                            <Label htmlFor="autorizacaoDados" className="text-sm font-normal">
+                            <Label htmlFor="autorizacaoDados" className="text-sm font-normal text-gray-700 dark:text-gray-300">
                                 Autorizo a Congregação Cristã no Brasil – CCB a tratar meus dados pessoais, inclusive sensíveis, para a gestão da Música, os quais não serão divulgados a terceiros.
                             </Label>
                         </div>

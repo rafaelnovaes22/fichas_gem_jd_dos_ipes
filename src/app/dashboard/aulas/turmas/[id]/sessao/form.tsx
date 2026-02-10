@@ -108,11 +108,19 @@ export function SessaoForm({ turmaId, alunos, programasMinimo }: SessaoFormProps
         );
     };
 
+    const VIRTUAL_ITEM_METODO_INICIAL = "virtual-metodo-inicial";
+
     const getItensSelecionadosTexto = (alunoId: string): string => {
         const registro = registros.find((r) => r.alunoId === alunoId);
         if (!registro || registro.itensProgramaMinimo.length === 0) return "";
 
         const itensSelecionados: string[] = [];
+
+        // Verificar item virtual
+        if (registro.itensProgramaMinimo.includes(VIRTUAL_ITEM_METODO_INICIAL)) {
+            itensSelecionados.push("Método Pedagógico Inicial");
+        }
+
         programasMinimo.forEach((prog) => {
             prog.itens.forEach((item) => {
                 if (registro.itensProgramaMinimo.includes(item.id)) {
@@ -356,16 +364,15 @@ export function SessaoForm({ turmaId, alunos, programasMinimo }: SessaoFormProps
                                                                                     return (
                                                                                         <div
                                                                                             key={item.id}
-                                                                                            className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                                                                                                selecionado
-                                                                                                    ? "bg-indigo-50 border-indigo-200"
-                                                                                                    : "hover:bg-gray-50 border-gray-200"
-                                                                                            }`}
+                                                                                            className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${selecionado
+                                                                                                ? "bg-indigo-50 border-indigo-200"
+                                                                                                : "hover:bg-gray-50 border-gray-200"
+                                                                                                }`}
                                                                                             onClick={() => toggleItemProgramaMinimo(aluno.id, item.id)}
                                                                                         >
                                                                                             <Checkbox
                                                                                                 checked={selecionado}
-                                                                                                onCheckedChange={() => {}}
+                                                                                                onCheckedChange={() => { }}
                                                                                                 className="mt-0.5"
                                                                                             />
                                                                                             <div className="flex-1">

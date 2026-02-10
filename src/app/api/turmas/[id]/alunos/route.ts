@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions, isAdmin as checkIsAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
 
     // Verificar permissão
-    const isAdmin = session.user.role === "ADMIN";
+    const isAdmin = checkIsAdmin(session.user.role);
     const isOwner = turma.instrutor.usuarioId === session.user.id;
 
     if (!isAdmin && !isOwner) {
@@ -112,7 +112,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
 
     // Verificar permissão
-    const isAdmin = session.user.role === "ADMIN";
+    const isAdmin = checkIsAdmin(session.user.role);
     const isOwner = turma.instrutor.usuarioId === session.user.id;
 
     if (!isAdmin && !isOwner) {

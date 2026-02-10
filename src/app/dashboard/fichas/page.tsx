@@ -1,18 +1,34 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions, isAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText } from "lucide-react";
 import { FichasList } from "./fichas-list";
 
+import { NovaFichaDialog } from "./nova-ficha-dialog";
+
 export default async function FichasPage() {
     const session = await getServerSession(authOptions);
-    const isAdmin = session?.user?.role === "ADMIN";
+    const isAdminUser = session?.user?.role ? isAdmin(session.user.role) : false;
+
+    // Buscar alunos disponíveis para criar ficha
+    // Admin vê todos, Instrutor vê apenas seus
+    const alunosDisponiveis = await prisma.aluno.findMany({
+        where: {
+            ativo: true,
+            ...(isAdminUser ? {} : { instrutor: { usuarioId: session?.user?.id } }),
+        },
+        select: {
+            id: true,
+            nome: true,
+        },
+        orderBy: { nome: "asc" },
+    });
 
     const fichas = await prisma.fichaAcompanhamento.findMany({
-        where: isAdmin
+        where: isAdminUser
             ? {}
             : { aluno: { instrutor: { usuarioId: session?.user?.id } } },
         include: {
@@ -76,19 +92,20 @@ export default async function FichasPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Fichas de Acompanhamento</h1>
-                    <p className="text-gray-500">
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Fichas de Acompanhamento</h1>
+                    <p className="text-gray-500 dark:text-gray-400">
                         {alunosAgrupados.length} aluno{alunosAgrupados.length !== 1 ? "s" : ""} • {fichas.length} ficha{fichas.length !== 1 ? "s" : ""}
                     </p>
                 </div>
+                <NovaFichaDialog alunos={alunosDisponiveis} />
             </div>
 
             {fichas.length === 0 ? (
                 <>
                     <Card>
                         <CardContent className="py-12 text-center">
-                            <FileText className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                            <p className="text-gray-500 mb-4">Nenhuma ficha encontrada.</p>
+                            <FileText className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                            <p className="text-gray-500 dark:text-gray-400 mb-4">Nenhuma ficha encontrada.</p>
                             <Link href="/dashboard/alunos">
                                 <Button variant="outline">Ver Alunos</Button>
                             </Link>

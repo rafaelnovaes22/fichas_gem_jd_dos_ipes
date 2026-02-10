@@ -71,3 +71,8 @@ export const authOptions: NextAuthOptions = {
     },
     secret: process.env.NEXTAUTH_SECRET,
 };
+
+// Função auxiliar para verificar se o usuário é administrador (incluindo ENCARREGADO)
+export function isAdmin(role: string): boolean {
+    return role === "ADMIN" || role === "ENCARREGADO";
+}

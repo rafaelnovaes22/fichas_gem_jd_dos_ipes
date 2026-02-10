@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions, isAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NovoInstrutorForm } from "./form";
 import { redirect } from "next/navigation";
@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 export default async function NovoInstrutorPage() {
     const session = await getServerSession(authOptions);
 
-    if (!session || session.user.role !== "ADMIN") {
+    if (!session || !isAdmin(session.user.role)) {
         redirect("/dashboard");
     }
 
@@ -15,5 +15,5 @@ export default async function NovoInstrutorPage() {
         orderBy: { nome: "asc" },
     });
 
-    return <NovoInstrutorForm instrumentosDisponiveis={instrumentos} />;
+    return <NovoInstrutorForm instrumentosDisponiveis={instrumentos} userRole={session.user.role} />;
 }

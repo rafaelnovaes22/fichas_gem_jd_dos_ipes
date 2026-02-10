@@ -344,7 +344,7 @@ export function FichaPDFDocument({ ficha, aulas, avaliacoes }: FichaPDFProps) {
                         <Text style={styles.logoText}>♪</Text>
                     </View>
                     <View style={styles.headerTitle}>
-                        <Text style={styles.title}>FICHA DE ACOMPANHAMENTO - GEM</Text>
+                        <Text style={styles.title}>FICHA DE ACOMPANHAMENTO - GGEM</Text>
                         <Text style={styles.subtitle}>
                             Congregação Cristã no Brasil - {tipoAulaLabel[ficha.tipoAula] || ficha.tipoAula}
                         </Text>
@@ -544,7 +544,7 @@ export function FichaPDFDocument({ ficha, aulas, avaliacoes }: FichaPDFProps) {
 
                 {/* Footer */}
                 <Text style={styles.footer}>
-                    Sistema GEM - Gestão de Ensino Musical | Congregação Cristã no Brasil
+                    Sistema GGEM - Gestão de Grupo de Ensino Musical | Congregação Cristã no Brasil
                 </Text>
                 <Text
                     style={styles.pageNumber}

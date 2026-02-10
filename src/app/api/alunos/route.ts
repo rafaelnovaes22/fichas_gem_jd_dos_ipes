@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions, isAdmin as checkIsAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -26,7 +26,7 @@ export async function GET() {
             return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
         }
 
-        const isAdmin = session.user.role === "ADMIN";
+        const isAdmin = checkIsAdmin(session.user.role);
 
         const alunos = await prisma.aluno.findMany({
             where: isAdmin
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
         let instrutorId = session.user.instrutorId;
 
         // Se é admin e não tem instrutor, criar um instrutor "sistema"
-        if (!instrutorId && session.user.role === "ADMIN") {
+        if (!instrutorId && checkIsAdmin(session.user.role)) {
             const adminInstrutor = await prisma.instrutor.findFirst({
                 where: { usuario: { role: "ADMIN" } },
             });

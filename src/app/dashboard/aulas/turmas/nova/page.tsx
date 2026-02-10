@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
+import { BackButton } from "@/components/ui/back-button";
 import { ArrowLeft } from "lucide-react";
 import { TurmaForm } from "./form";
 
@@ -29,11 +30,7 @@ export default async function NovaTurmaPage() {
         <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center gap-4">
-                <Link href="/dashboard/aulas">
-                    <Button variant="outline" size="icon">
-                        <ArrowLeft className="w-4 h-4" />
-                    </Button>
-                </Link>
+                <BackButton />
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Nova Turma</h1>
                     <p className="text-gray-500">

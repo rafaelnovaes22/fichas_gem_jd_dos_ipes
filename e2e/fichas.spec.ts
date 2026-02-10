@@ -156,12 +156,15 @@ test.describe("Ficha Detalhe", () => {
         if (!aluno) return;
 
         await page.goto(`/dashboard/fichas/${aluno.fichas[0].id}`);
-        await expect(page.getByText("Solfejo").first()).toBeVisible();
-        await expect(page.getByText("Teoria Musical").first()).toBeVisible();
+        // Usar seletor que busca apenas elementos visíveis ou dentro do container do card
+        const cardSeletor = page.locator(".grid").first(); // Container dos cards
+
+        await expect(cardSeletor.getByText("Solfejo")).toBeVisible();
+        await expect(cardSeletor.getByText("Teoria Musical")).toBeVisible();
         await expect(
-            page.getByText("Prática de Instrumento").first()
+            cardSeletor.getByText(/Prática de Instrumento/i)
         ).toBeVisible();
-        await expect(page.getByText("Hinário").first()).toBeVisible();
+        await expect(cardSeletor.getByText("Hinário")).toBeVisible();
     });
 
     test("deve exibir informações do aluno no cabeçalho", async ({
@@ -171,7 +174,13 @@ test.describe("Ficha Detalhe", () => {
         if (!aluno) return;
 
         await page.goto(`/dashboard/fichas/${aluno.fichas[0].id}`);
-        await expect(page.getByText(aluno.nome).first()).toBeVisible();
+        // Buscar pelo nome do aluno que esteja visível (ignora o do header mobile hidden)
+        // O header desktop tem o nome, e o card de detalhes também.
+        // Vamos pegar o do Card de Detalhes (que é h1 ou p dependendo da sessão)
+        // No desktop, temos um Card com "ALUNO" e o nome em seguida.
+
+        const desktopCard = page.locator(".hidden.lg\\:block");
+        await expect(desktopCard.getByText(aluno.nome).first()).toBeVisible();
     });
 
     test("deve exibir seção de aulas", async ({ page }) => {
@@ -180,7 +189,7 @@ test.describe("Ficha Detalhe", () => {
 
         await page.goto(`/dashboard/fichas/${aluno.fichas[0].id}`);
         await expect(
-            page.getByText("FICHA DE ACOMPANHAMENTO - GEM")
+            page.getByText("FICHA DE ACOMPANHAMENTO - GGEM")
         ).toBeVisible();
     });
 });

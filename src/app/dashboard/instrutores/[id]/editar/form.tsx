@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -10,13 +10,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BackButton } from "@/components/ui/back-button";
 import { ArrowLeft, Trash2 } from "lucide-react";
+
+const CONGREGACAO_FIXA = "Jardim dos Ipês";
 
 const schema = z.object({
     nome: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
     telefone: z.string().optional(),
-    congregacao: z.string().min(1, "Congregação é obrigatória"),
+    congregacao: z.string().default(CONGREGACAO_FIXA).optional(),
     instrumentos: z.array(z.string()).min(1, "Selecione pelo menos um instrumento"),
+    role: z.enum(["INSTRUTOR", "ENCARREGADO", "ADMIN"]),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -26,6 +30,7 @@ interface Instrutor {
     usuario: {
         nome: string;
         telefone: string | null;
+        role: string;
     };
     congregacao: string;
     instrumentos: string[];
@@ -34,13 +39,39 @@ interface Instrutor {
 interface EditarInstrutorFormProps {
     instrutor: Instrutor;
     instrumentosDisponiveis: { id: string; nome: string; categoria: string }[];
+    userRole: string;
 }
 
-export function EditarInstrutorForm({ instrutor, instrumentosDisponiveis }: EditarInstrutorFormProps) {
+export function EditarInstrutorForm({ instrutor, instrumentosDisponiveis, userRole }: EditarInstrutorFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [error, setError] = useState("");
+    const [adminLimitReached, setAdminLimitReached] = useState(false);
+
+    // Verificar se usuário pode atribuir roles (ENCARREGADO ou ADMIN)
+    const canAssignRoles = userRole === "ENCARREGADO" || userRole === "ADMIN";
+    // Role atual do instrutor sendo editado
+    const currentRole = instrutor.usuario.role;
+    // Não permitir edição de role se for ENCARREGADO
+    const isEncarregado = currentRole === "ENCARREGADO";
+
+    // Verificar limite de ADMINs quando o formulário carrega
+    useEffect(() => {
+        if (canAssignRoles && !isEncarregado) {
+            fetch("/api/instrutores/admin-count")
+                .then(res => res.json())
+                .then(data => {
+                    // Se já é ADMIN, não precisa se preocupar com o limite para ele mesmo
+                    if (currentRole === "ADMIN") {
+                        setAdminLimitReached(data.count > 3);
+                    } else {
+                        setAdminLimitReached(data.limitReached || false);
+                    }
+                })
+                .catch(() => { });
+        }
+    }, [canAssignRoles, isEncarregado, currentRole]);
 
     const {
         register,
@@ -53,8 +84,9 @@ export function EditarInstrutorForm({ instrutor, instrumentosDisponiveis }: Edit
         defaultValues: {
             nome: instrutor.usuario.nome,
             telefone: instrutor.usuario.telefone || "",
-            congregacao: instrutor.congregacao,
+            congregacao: CONGREGACAO_FIXA,
             instrumentos: instrutor.instrumentos,
+            role: instrutor.usuario.role as "INSTRUTOR" | "ENCARREGADO" | "ADMIN",
         },
     });
 
@@ -73,11 +105,17 @@ export function EditarInstrutorForm({ instrutor, instrumentosDisponiveis }: Edit
         setLoading(true);
         setError("");
 
+        // Garantir que a congregação seja sempre a fixa
+        const payload = {
+            ...data,
+            congregacao: CONGREGACAO_FIXA,
+        };
+
         try {
             const response = await fetch(`/api/instrutores/${instrutor.id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
+                body: JSON.stringify(payload),
             });
 
             if (!response.ok) {
@@ -95,7 +133,7 @@ export function EditarInstrutorForm({ instrutor, instrumentosDisponiveis }: Edit
     };
 
     const handleDelete = async () => {
-        if (!confirm("Tem certeza que deseja desativar este instrutor?")) return;
+        if (!confirm("Tem certeza que deseja excluir este instrutor? Se ele tiver histórico de aulas, será apenas desativado.")) return;
 
         setDeleting(true);
         try {
@@ -104,13 +142,13 @@ export function EditarInstrutorForm({ instrutor, instrumentosDisponiveis }: Edit
             });
 
             if (!response.ok) {
-                throw new Error("Erro ao desativar instrutor");
+                throw new Error("Erro ao excluir instrutor");
             }
 
             router.push("/dashboard/instrutores");
             router.refresh();
         } catch (err) {
-            setError(err instanceof Error ? err.message : "Erro ao desativar instrutor");
+            setError(err instanceof Error ? err.message : "Erro ao excluir instrutor");
         } finally {
             setDeleting(false);
         }
@@ -130,11 +168,7 @@ export function EditarInstrutorForm({ instrutor, instrumentosDisponiveis }: Edit
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <Link href={`/dashboard/instrutores/${instrutor.id}`}>
-                        <Button variant="ghost" size="icon">
-                            <ArrowLeft className="w-4 h-4" />
-                        </Button>
-                    </Link>
+                    <BackButton />
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Editar Instrutor</h1>
                         <p className="text-gray-500">{instrutor.usuario.nome}</p>
@@ -142,7 +176,7 @@ export function EditarInstrutorForm({ instrutor, instrumentosDisponiveis }: Edit
                 </div>
                 <Button variant="destructive" size="sm" onClick={handleDelete} disabled={deleting}>
                     <Trash2 className="w-4 h-4 mr-2" />
-                    {deleting ? "Desativando..." : "Desativar"}
+                    {deleting ? "Excluindo..." : "Excluir"}
                 </Button>
             </div>
 
@@ -178,16 +212,57 @@ export function EditarInstrutorForm({ instrutor, instrumentosDisponiveis }: Edit
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="congregacao">Congregação *</Label>
-                                <Input
-                                    id="congregacao"
-                                    {...register("congregacao")}
-                                    placeholder="Nome da congregação"
-                                />
-                                {errors.congregacao && (
-                                    <p className="text-sm text-red-500">{errors.congregacao.message}</p>
-                                )}
+                                <Label>Congregação</Label>
+                                <div className="h-10 px-3 py-2 border rounded-md bg-gray-50 text-gray-700 flex items-center">
+                                    {CONGREGACAO_FIXA}
+                                </div>
                             </div>
+
+                            {/* Seletor de role: exibido apenas para quem pode atribuir roles e se não for ENCARREGADO */}
+                            {canAssignRoles && !isEncarregado && (
+                                <div className="space-y-2">
+                                    <Label htmlFor="role">Perfil de Acesso *</Label>
+                                    <select
+                                        id="role"
+                                        {...register("role")}
+                                        className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+                                    >
+                                        <option value="INSTRUTOR">Instrutor</option>
+                                        <option value="ADMIN" disabled={adminLimitReached && currentRole !== "ADMIN"}>
+                                            Secretário {adminLimitReached && currentRole !== "ADMIN" ? "(limite atingido)" : ""}
+                                        </option>
+                                    </select>
+                                    {errors.role && (
+                                        <p className="text-sm text-red-500">{errors.role.message}</p>
+                                    )}
+                                    {adminLimitReached && currentRole !== "ADMIN" && (
+                                        <p className="text-xs text-amber-600">
+                                            Limite de 3 secretários atingido.
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Exibir role atual se for ENCARREGADO (não editável) */}
+                            {isEncarregado && (
+                                <div className="space-y-2">
+                                    <Label>Perfil de Acesso</Label>
+                                    <div className="h-10 px-3 py-2 border rounded-md bg-gray-100 text-gray-700 flex items-center">
+                                        Encarregado de Orquestra
+                                        <span className="text-xs text-gray-500 ml-2">(não editável)</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Exibir role atual como texto se usuário não pode atribuir roles */}
+                            {!canAssignRoles && !isEncarregado && (
+                                <div className="space-y-2">
+                                    <Label>Perfil de Acesso</Label>
+                                    <div className="h-10 px-3 py-2 border rounded-md bg-gray-50 text-gray-700 flex items-center">
+                                        {currentRole === "ADMIN" ? "Secretário" : "Instrutor"}
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="md:col-span-2 space-y-4">
                                 <Label>Instrumentos que leciona *</Label>

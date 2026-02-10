@@ -27,7 +27,7 @@ test.describe("Programa Mínimo", () => {
 
     test("deve navegar da página de aulas para programa mínimo", async ({ page }) => {
         await page.goto("/dashboard/aulas");
-        await page.getByRole("button", { name: "Ver Requisitos" }).click();
+        await page.getByRole("button", { name: "Ver" }).click();
         await expect(
             page.getByRole("heading", { name: "Programa Mínimo para Músicos" })
         ).toBeVisible();

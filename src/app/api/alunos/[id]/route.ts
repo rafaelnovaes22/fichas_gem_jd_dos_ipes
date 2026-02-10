@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions, isAdmin as checkIsAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
         // Verificar permissão (admin vê todos, instrutor vê apenas os seus)
         // Verificar permissão (admin vê todos, instrutor vê apenas os seus)
-        const isAdmin = session.user.role === "ADMIN";
+        const isAdmin = checkIsAdmin(session.user.role);
         const isInstrutorPrimary = aluno.instrutor.usuarioId === session.user.id;
         const isInstrutorSecondary = aluno.instrutor2?.usuarioId === session.user.id; // Verifica se existe e compara
 
@@ -98,7 +98,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         }
 
         // Verificar permissão
-        const isAdmin = session.user.role === "ADMIN";
+        const isAdmin = checkIsAdmin(session.user.role);
         if (!isAdmin && aluno.instrutor.usuarioId !== session.user.id) {
             return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
         }
@@ -159,7 +159,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         }
 
         // Verificar permissão: admin pode tudo, instrutor só seus alunos
-        const isAdmin = session.user.role === "ADMIN";
+        const isAdmin = checkIsAdmin(session.user.role);
         const isInstrutorPrimary = aluno.instrutor.usuarioId === session.user.id;
         const isInstrutorSecondary = aluno.instrutor2?.usuarioId === session.user.id;
 

@@ -77,38 +77,38 @@ export default async function ProgramaMinimoPage() {
                     </Button>
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                         Programa Mínimo para Músicos – 2023
                     </h1>
-                    <p className="text-gray-500">
+                    <p className="text-gray-500 dark:text-gray-400">
                         Congregação Cristã no Brasil
                     </p>
                 </div>
             </div>
 
             {/* Info Card */}
-            <Card className="bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-100">
+            <Card className="bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-100 dark:from-indigo-950/50 dark:to-blue-950/50 dark:border-indigo-900/50">
                 <CardContent className="p-4">
                     <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0">
-                            <BookOpen className="w-5 h-5 text-indigo-600" />
+                        <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center shrink-0">
+                            <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                         </div>
                         <div>
-                            <p className="font-medium text-gray-900">
+                            <p className="font-medium text-gray-900 dark:text-gray-100">
                                 Sobre o Programa Mínimo
                             </p>
-                            <p className="text-sm text-gray-600 mt-1">
+                            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                                 O Programa Mínimo estabelece os requisitos que cada músico deve
                                 atender para participar nos diferentes níveis da orquestra:
                             </p>
                             <div className="flex flex-wrap gap-2 mt-2">
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-700">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400">
                                     RJM - Reunião de Jovens e Menores
                                 </span>
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">
                                     Culto - Cultos Regulares
                                 </span>
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
                                     Oficialização
                                 </span>
                             </div>
@@ -137,25 +137,25 @@ export default async function ProgramaMinimoPage() {
                 <div className="space-y-8">
                     {categoriasOrdenadas.map((categoria) => (
                         <div key={categoria} className="space-y-4">
-                            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 border-b dark:border-zinc-800 pb-2">
                                 {categoria}
                             </h2>
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                 {instrumentosPorCategoria[categoria].map(({ instrumento, programas }) => (
-                                    <Card key={instrumento.id} className="overflow-hidden">
-                                        <CardHeader className="bg-gray-50 border-b py-3">
-                                            <CardTitle className="text-base flex items-center gap-2">
-                                                <Music className="w-4 h-4 text-indigo-600" />
+                                    <Card key={instrumento.id} className="overflow-hidden dark:border-zinc-800">
+                                        <CardHeader className="bg-gray-50 dark:bg-zinc-900 border-b dark:border-zinc-800 py-3">
+                                            <CardTitle className="text-base flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                                                <Music className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                                                 {instrumento.nome}
                                             </CardTitle>
                                         </CardHeader>
                                         <CardContent className="p-0">
-                                            <div className="divide-y">
+                                            <div className="divide-y dark:divide-zinc-800">
                                                 {programas.map((programa) => (
                                                     <div key={programa.id} className="p-3">
                                                         {/* Cabeçalho do Nível */}
                                                         <div className="flex items-center gap-2 mb-2">
-                                                            <GraduationCap className="w-4 h-4 text-gray-500" />
+                                                            <GraduationCap className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                                                             <span
                                                                 className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${nivelProgramaMinimoColor(
                                                                     programa.nivel
@@ -180,11 +180,11 @@ export default async function ProgramaMinimoPage() {
                                                                         {tipoConteudoPMLabel(item.tipo)}
                                                                     </span>
                                                                     <div className="flex-1">
-                                                                        <p className="text-gray-900">
+                                                                        <p className="text-gray-900 dark:text-gray-200">
                                                                             {item.descricao}
                                                                         </p>
                                                                         {item.alternativas && (
-                                                                            <p className="text-xs text-gray-500 mt-0.5">
+                                                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                                                                                 <span className="font-medium">Alternativas:</span>{" "}
                                                                                 {item.alternativas}
                                                                             </p>

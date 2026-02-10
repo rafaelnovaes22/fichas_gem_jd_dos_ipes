@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions, isAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { EditarInstrutorForm } from "./form";
 
@@ -12,7 +12,7 @@ export default async function EditarInstrutorPage({ params }: EditarInstrutorPag
     const session = await getServerSession(authOptions);
     const { id } = await params;
 
-    if (session?.user?.role !== "ADMIN") {
+    if (!session || !isAdmin(session.user.role)) {
         notFound();
     }
 
@@ -39,11 +39,13 @@ export default async function EditarInstrutorPage({ params }: EditarInstrutorPag
                 usuario: {
                     nome: instrutor.usuario.nome,
                     telefone: instrutor.usuario.telefone,
+                    role: instrutor.usuario.role,
                 },
                 congregacao: instrutor.congregacao,
                 instrumentos: instrutor.instrumentos,
             }}
             instrumentosDisponiveis={instrumentosDisponiveis}
+            userRole={session.user.role}
         />
     );
 }

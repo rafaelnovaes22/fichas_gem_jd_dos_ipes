@@ -40,7 +40,7 @@ export function MobileNav() {
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                     <span className="text-lg font-bold text-white">♪</span>
                 </div>
-                <span className="font-bold text-gray-900">GEM</span>
+                <span className="font-bold text-gray-900">GGEM</span>
             </div>
 
             {/* Overlay */}

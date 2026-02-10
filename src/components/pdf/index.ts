@@ -1,2 +1,2 @@
 export { FichaPDFDocument } from "./FichaPDF";
-export { FichaPDFButton } from "./FichaPDFButton";
+export { FichaPDFButton } from "./FichaPDFWrapper";

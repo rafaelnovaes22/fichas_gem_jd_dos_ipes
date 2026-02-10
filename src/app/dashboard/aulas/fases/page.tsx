@@ -62,7 +62,7 @@ export default function FasesPage() {
         try {
             const res = await fetch("/api/auth/session");
             const data = await res.json();
-            setIsAdmin(data?.user?.role === "ADMIN");
+            setIsAdmin(data?.user?.role === "ADMIN" || data?.user?.role === "ENCARREGADO");
         } catch (error) {
             console.error("Erro ao verificar permissões:", error);
         }
@@ -176,8 +176,8 @@ export default function FasesPage() {
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Fases do MSA</h1>
-                        <p className="text-gray-500">
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Fases do MSA</h1>
+                        <p className="text-gray-500 dark:text-gray-400">
                             Gerencie as fases do Método de Solfejo e Análise
                         </p>
                     </div>
@@ -261,15 +261,15 @@ export default function FasesPage() {
             </div>
 
             {/* Info Card */}
-            <Card className="bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-100">
+            <Card className="bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-100 dark:from-indigo-950/50 dark:to-blue-950/50 dark:border-indigo-900/50">
                 <CardContent className="p-4">
                     <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0">
-                            <BookOpen className="w-5 h-5 text-indigo-600" />
+                        <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center shrink-0">
+                            <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                         </div>
                         <div>
-                            <p className="font-medium text-gray-900">Sobre as Fases do MSA</p>
-                            <p className="text-sm text-gray-600 mt-1">
+                            <p className="font-medium text-gray-900 dark:text-gray-100">Sobre as Fases do MSA</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                                 O Método de Solfejo e Análise (MSA) é dividido em fases que
                                 abordam progressivamente os conceitos musicais. Cada fase contém
                                 tópicos específicos que são utilizados nas aulas teóricas.
@@ -299,7 +299,7 @@ export default function FasesPage() {
                             </div>
                         </CardHeader>
                         <CardContent className="pt-0">
-                            <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                            <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-4">
                                 <div className="flex items-center gap-1">
                                     <GraduationCap className="w-4 h-4" />
                                     <span>{fase._count.topicos} tópicos</span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -10,26 +10,54 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BackButton } from "@/components/ui/back-button";
 import { ArrowLeft } from "lucide-react";
+
+const CONGREGACAO_FIXA = "Jardim dos Ipês";
 
 const schema = z.object({
     nome: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
     email: z.string().email("Email inválido"),
     telefone: z.string().optional(),
-    congregacao: z.string().min(1, "Congregação é obrigatória"),
+    congregacao: z.string().default(CONGREGACAO_FIXA).optional(),
     instrumentos: z.array(z.string()).min(1, "Selecione pelo menos um instrumento"),
+    role: z.enum(["INSTRUTOR", "ADMIN"]).default("INSTRUTOR"),
 });
 
-type FormData = z.infer<typeof schema>;
+type FormData = {
+    nome: string;
+    email: string;
+    telefone?: string;
+    congregacao?: string;
+    instrumentos: string[];
+    role: "INSTRUTOR" | "ADMIN";
+};
 
 interface NovoInstrutorFormProps {
     instrumentosDisponiveis: { id: string; nome: string; categoria: string }[];
+    userRole: string;
 }
 
-export function NovoInstrutorForm({ instrumentosDisponiveis }: NovoInstrutorFormProps) {
+export function NovoInstrutorForm({ instrumentosDisponiveis, userRole }: NovoInstrutorFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [adminLimitReached, setAdminLimitReached] = useState(false);
+
+    // Verificar se usuário pode atribuir roles (ENCARREGADO ou ADMIN)
+    const canAssignRoles = userRole === "ENCARREGADO" || userRole === "ADMIN";
+
+    // Verificar limite de ADMINs quando o formulário carrega
+    useEffect(() => {
+        if (canAssignRoles) {
+            fetch("/api/instrutores/admin-count")
+                .then(res => res.json())
+                .then(data => {
+                    setAdminLimitReached(data.limitReached || false);
+                })
+                .catch(() => { });
+        }
+    }, [canAssignRoles]);
 
     const {
         register,
@@ -38,9 +66,11 @@ export function NovoInstrutorForm({ instrumentosDisponiveis }: NovoInstrutorForm
         setValue,
         watch,
     } = useForm<FormData>({
-        resolver: zodResolver(schema),
+        resolver: zodResolver(schema) as never,
         defaultValues: {
             instrumentos: [],
+            congregacao: CONGREGACAO_FIXA,
+            role: "INSTRUTOR",
         },
     });
 
@@ -62,11 +92,17 @@ export function NovoInstrutorForm({ instrumentosDisponiveis }: NovoInstrutorForm
         setLoading(true);
         setError("");
 
+        // Garantir que a congregação seja sempre a fixa
+        const payload = {
+            ...data,
+            congregacao: CONGREGACAO_FIXA,
+        };
+
         try {
             const response = await fetch("/api/instrutores", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
+                body: JSON.stringify(payload),
             });
 
             if (!response.ok) {
@@ -96,14 +132,10 @@ export function NovoInstrutorForm({ instrumentosDisponiveis }: NovoInstrutorForm
         <div className="max-w-3xl mx-auto space-y-6">
             {/* Header */}
             <div className="flex items-center gap-4">
-                <Link href="/dashboard/instrutores">
-                    <Button variant="ghost" size="icon">
-                        <ArrowLeft className="w-4 h-4" />
-                    </Button>
-                </Link>
+                <BackButton />
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Novo Instrutor</h1>
-                    <p className="text-gray-500">Cadastre um novo instrutor no sistema</p>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Novo Instrutor</h1>
+                    <p className="text-gray-500 dark:text-gray-400">Cadastre um novo instrutor no sistema</p>
                 </div>
             </div>
 
@@ -115,7 +147,7 @@ export function NovoInstrutorForm({ instrumentosDisponiveis }: NovoInstrutorForm
                 <CardContent>
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                         {error && (
-                            <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-200">
+                            <div className="p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/10 rounded-lg border border-red-200 dark:border-red-800">
                                 {error}
                             </div>
                         )}
@@ -151,17 +183,36 @@ export function NovoInstrutorForm({ instrumentosDisponiveis }: NovoInstrutorForm
                                 />
                             </div>
 
-                            <div className="md:col-span-2 space-y-2">
-                                <Label htmlFor="congregacao">Congregação *</Label>
-                                <Input
-                                    id="congregacao"
-                                    {...register("congregacao")}
-                                    placeholder="Nome da congregação"
-                                />
-                                {errors.congregacao && (
-                                    <p className="text-sm text-red-500">{errors.congregacao.message}</p>
-                                )}
+                            <div className="space-y-2">
+                                <Label>Congregação</Label>
+                                <div className="h-10 px-3 py-2 border rounded-md bg-gray-50 dark:bg-zinc-900/50 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-zinc-800 flex items-center">
+                                    {CONGREGACAO_FIXA}
+                                </div>
                             </div>
+
+                            {canAssignRoles && (
+                                <div className="space-y-2">
+                                    <Label htmlFor="role">Perfil de Acesso *</Label>
+                                    <select
+                                        id="role"
+                                        {...register("role")}
+                                        className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+                                    >
+                                        <option value="INSTRUTOR">Instrutor</option>
+                                        <option value="ADMIN" disabled={adminLimitReached}>
+                                            Secretário {adminLimitReached ? "(limite atingido)" : ""}
+                                        </option>
+                                    </select>
+                                    {errors.role && (
+                                        <p className="text-sm text-red-500">{errors.role.message}</p>
+                                    )}
+                                    {adminLimitReached && (
+                                        <p className="text-xs text-amber-600 dark:text-amber-500">
+                                            Limite de 3 secretários atingido. Desative um secretário existente para adicionar outro.
+                                        </p>
+                                    )}
+                                </div>
+                            )}
 
                             <div className="md:col-span-2 space-y-4">
                                 <Label>Instrumentos que leciona *</Label>
@@ -169,10 +220,10 @@ export function NovoInstrutorForm({ instrumentosDisponiveis }: NovoInstrutorForm
                                     <p className="text-sm text-red-500">{errors.instrumentos.message}</p>
                                 )}
 
-                                <div className="space-y-4 border rounded-lg p-4 bg-gray-50 max-h-96 overflow-y-auto">
+                                <div className="space-y-4 border rounded-lg p-4 bg-gray-50 dark:bg-zinc-900/50 dark:border-zinc-800 max-h-96 overflow-y-auto">
                                     {Object.entries(instrumentosPorCategoria).map(([categoria, insts]) => (
                                         <div key={categoria}>
-                                            <h4 className="font-semibold text-sm text-gray-700 mb-2 border-b pb-1">
+                                            <h4 className="font-semibold text-sm text-gray-700 dark:text-gray-300 mb-2 border-b dark:border-zinc-800 pb-1">
                                                 {categoria}
                                             </h4>
                                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -183,11 +234,11 @@ export function NovoInstrutorForm({ instrumentosDisponiveis }: NovoInstrutorForm
                                                             id={`inst-${inst.id}`}
                                                             checked={selectedInstrumentos.includes(inst.nome)}
                                                             onChange={() => toggleInstrumento(inst.nome)}
-                                                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                                            className="h-4 w-4 rounded border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:focus:ring-offset-zinc-900"
                                                         />
                                                         <label
                                                             htmlFor={`inst-${inst.id}`}
-                                                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-gray-300"
                                                         >
                                                             {inst.nome}
                                                         </label>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions, isAdmin as checkIsAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -20,7 +20,7 @@ export async function GET() {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
-    const isAdmin = session.user.role === "ADMIN";
+    const isAdmin = checkIsAdmin(session.user.role);
 
     // Buscar instrutor do usuário logado
     const instrutor = await prisma.instrutor.findUnique({
@@ -93,10 +93,10 @@ export async function POST(request: NextRequest) {
         horario: data.horario,
         alunos: data.alunoIds?.length
           ? {
-              create: data.alunoIds.map((alunoId) => ({
-                alunoId,
-              })),
-            }
+            create: data.alunoIds.map((alunoId) => ({
+              alunoId,
+            })),
+          }
           : undefined,
       },
       include: {

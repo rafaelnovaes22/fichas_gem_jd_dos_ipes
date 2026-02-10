@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions, isAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { EditarAlunoForm } from "./form";
 
@@ -25,11 +25,11 @@ export default async function EditarAlunoPage({ params }: EditarAlunoPageProps) 
     }
 
     // Verificar permissão
-    const isAdmin = session?.user?.role === "ADMIN";
+    const isAdminUser = session?.user?.role ? isAdmin(session.user.role) : false;
     const isInstrutorPrimary = aluno.instrutor.usuarioId === session?.user?.id;
     const isInstrutorSecondary = aluno.instrutor2?.usuarioId === session?.user?.id;
 
-    if (!isAdmin && !isInstrutorPrimary && !isInstrutorSecondary) {
+    if (!isAdminUser && !isInstrutorPrimary && !isInstrutorSecondary) {
         notFound();
     }
 

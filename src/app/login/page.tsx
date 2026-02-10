@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -50,7 +51,7 @@ export default function LoginPage() {
                         <div className="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/20">
                             <span className="text-3xl font-bold text-white">♪</span>
                         </div>
-                        <span className="text-2xl font-bold text-white">GEM</span>
+                        <span className="text-2xl font-bold text-white">GGEM</span>
                     </Link>
                 </div>
 
@@ -67,7 +68,7 @@ export default function LoginPage() {
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             {error && (
-                                <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-200">
+                                <div className="p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/10 rounded-lg border border-red-200 dark:border-red-800">
                                     {error}
                                 </div>
                             )}
@@ -87,9 +88,8 @@ export default function LoginPage() {
 
                             <div className="space-y-2">
                                 <Label htmlFor="senha">Senha</Label>
-                                <Input
+                                <PasswordInput
                                     id="senha"
-                                    type="password"
                                     placeholder="••••••••"
                                     value={senha}
                                     onChange={(e) => setSenha(e.target.value)}
@@ -127,13 +127,23 @@ export default function LoginPage() {
                                     "Entrar"
                                 )}
                             </Button>
+
+                            <p className="text-center text-sm text-gray-600 dark:text-gray-400 pt-2">
+                                Ainda não tem uma conta?{" "}
+                                <Link
+                                    href="/register"
+                                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+                                >
+                                    Cadastre-se
+                                </Link>
+                            </p>
                         </form>
                     </CardContent>
                 </Card>
 
                 {/* Footer */}
                 <p className="text-center text-blue-200/60 text-sm mt-6">
-                    Sistema GEM - Gestão de Ensino Musical
+                    Sistema GGEM - Gestão de Grupo de Ensino Musical
                 </p>
             </div>
         </div>

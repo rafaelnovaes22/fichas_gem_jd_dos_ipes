@@ -70,8 +70,8 @@ export default async function AulasPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Aulas</h1>
-          <p className="text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Aulas</h1>
+          <p className="text-gray-500 dark:text-gray-400">
             Gerencie suas turmas e sessões de aula
           </p>
         </div>
@@ -88,12 +88,12 @@ export default async function AulasPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                <Users className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Turmas Ativas</p>
-                <p className="text-xl font-bold text-gray-900">{totalTurmas}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Turmas Ativas</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{totalTurmas}</p>
               </div>
             </div>
           </CardContent>
@@ -102,12 +102,12 @@ export default async function AulasPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                <Users className="w-5 h-5 text-green-600" />
+              <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                <Users className="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Total de Alunos</p>
-                <p className="text-xl font-bold text-gray-900">{totalAlunos}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Total de Alunos</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{totalAlunos}</p>
               </div>
             </div>
           </CardContent>
@@ -116,12 +116,12 @@ export default async function AulasPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-purple-600" />
+              <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Sessões (Mês)</p>
-                <p className="text-xl font-bold text-gray-900">
+                <p className="text-sm text-gray-500 dark:text-gray-400">Sessões (Mês)</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">
                   {sessoesEsteMes}
                 </p>
               </div>
@@ -132,12 +132,12 @@ export default async function AulasPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                <Clock className="w-5 h-5 text-orange-600" />
+              <div className="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+                <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Próxima Aula</p>
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm text-gray-500 dark:text-gray-400">Próxima Aula</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                   {proximaAula
                     ? diaSemanaLabel(proximaAula.diaSemana)
                     : "Não agendada"}
@@ -150,18 +150,18 @@ export default async function AulasPage() {
 
       {/* Links para Programa Mínimo e Fases */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-100">
+        <Card className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/30 border-indigo-100 dark:border-indigo-900">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
-                  <BookOpen className="w-5 h-5 text-indigo-600" />
+                <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">
+                  <p className="font-medium text-gray-900 dark:text-gray-100">
                     Programa Mínimo para Músicos
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     Consulte os requisitos por instrumento e nível
                   </p>
                 </div>
@@ -175,18 +175,18 @@ export default async function AulasPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-100">
+        <Card className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 border-purple-100 dark:border-purple-900">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                  <GraduationCap className="w-5 h-5 text-purple-600" />
+                <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
+                  <GraduationCap className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">
+                  <p className="font-medium text-gray-900 dark:text-gray-100">
                     Fases do MSA
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     Gerencie as fases e tópicos do Método de Solfejo
                   </p>
                 </div>
@@ -203,14 +203,14 @@ export default async function AulasPage() {
 
       {/* Grid de Turmas */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
           Minhas Turmas
         </h2>
 
         {turmas.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <p className="text-gray-500 mb-4">
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
                 Você ainda não tem turmas cadastradas.
               </p>
               <Link href="/dashboard/aulas/turmas/nova">
@@ -226,18 +226,18 @@ export default async function AulasPage() {
             {turmas.map((turma) => (
               <Card
                 key={turma.id}
-                className="hover:shadow-md transition-shadow"
+                className="hover:shadow-md transition-shadow dark:border-zinc-800"
               >
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center justify-between">
-                    <span className="truncate">{turma.nome}</span>
-                    <span className="text-xs font-normal px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                    <span className="truncate text-gray-900 dark:text-gray-100">{turma.nome}</span>
+                    <span className="text-xs font-normal px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full">
                       {turma._count.alunos} aluno
                       {turma._count.alunos !== 1 ? "s" : ""}
                     </span>
                   </CardTitle>
                   {turma.descricao && (
-                    <p className="text-sm text-gray-500 line-clamp-2">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
                       {turma.descricao}
                     </p>
                   )}
@@ -245,7 +245,7 @@ export default async function AulasPage() {
                 <CardContent className="pt-0">
                   <div className="space-y-2 mb-4">
                     {turma.diaSemana && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                         <Calendar className="w-4 h-4" />
                         <span>
                           {diaSemanaLabel(turma.diaSemana)}
@@ -254,7 +254,7 @@ export default async function AulasPage() {
                       </div>
                     )}
                     {turma.sessoes[0]?.data && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                         <Clock className="w-4 h-4" />
                         <span>
                           Última aula:{" "}

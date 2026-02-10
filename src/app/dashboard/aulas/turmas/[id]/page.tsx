@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BackButton } from "@/components/ui/back-button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Edit, Plus, Calendar, Users, BookOpen } from "lucide-react";
 import { diaSemanaLabel, faseOrquestraToNivel } from "@/lib/utils";
@@ -106,11 +107,7 @@ export default async function TurmaDetailPage({ params }: PageProps) {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/dashboard/aulas">
-                        <Button variant="outline" size="icon">
-                            <ArrowLeft className="w-4 h-4" />
-                        </Button>
-                    </Link>
+                    <BackButton />
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">{turma.nome}</h1>
                         <p className="text-gray-500">

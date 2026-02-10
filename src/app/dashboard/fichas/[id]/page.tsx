@@ -1,9 +1,12 @@
+
 import { notFound } from "next/navigation";
+import { DeleteResourceButton } from "@/components/delete-resource-button";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
+import { BackButton } from "@/components/ui/back-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, BookOpen, GraduationCap, Music, FileText, ChevronRight } from "lucide-react";
 import { FichaForm } from "./ficha-form";
@@ -73,11 +76,7 @@ export default async function FichaPage({ params }: FichaPageProps) {
             {/* Header Mobile - Simplificado */}
             <div className="lg:hidden">
                 <div className="flex items-center gap-3 mb-4">
-                    <Link href={`/dashboard/alunos/${ficha.aluno.id}`}>
-                        <Button variant="ghost" size="icon" className="h-10 w-10">
-                            <ArrowLeft className="w-5 h-5" />
-                        </Button>
-                    </Link>
+                    <BackButton variant="ghost" className="h-10 px-2" label="Voltar" />
                     <div className="flex-1 min-w-0">
                         <h1 className="text-lg font-bold text-gray-900 truncate">
                             {ficha.aluno.nome}
@@ -92,11 +91,7 @@ export default async function FichaPage({ params }: FichaPageProps) {
             {/* Header Desktop */}
             <div className="hidden lg:flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <Link href={`/dashboard/alunos/${ficha.aluno.id}`}>
-                        <Button variant="ghost" size="icon">
-                            <ArrowLeft className="w-4 h-4" />
-                        </Button>
-                    </Link>
+                    <BackButton />
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">
                             Ficha de Acompanhamento
@@ -106,11 +101,19 @@ export default async function FichaPage({ params }: FichaPageProps) {
                         </p>
                     </div>
                 </div>
-                <FichaPDFButton
-                    ficha={ficha}
-                    aulas={ficha.aulas}
-                    avaliacoes={ficha.avaliacoes}
-                />
+                <div className="flex items-center gap-2">
+                    <DeleteResourceButton
+                        id={ficha.id}
+                        endpoint={`/api/fichas/${ficha.id}`}
+                        redirectUrl="/dashboard/fichas"
+                        resourceName={`Ficha de ${ficha.aluno.nome}`}
+                    />
+                    <FichaPDFButton
+                        ficha={ficha}
+                        aulas={ficha.aulas}
+                        avaliacoes={ficha.avaliacoes}
+                    />
+                </div>
             </div>
 
             {/* Seletor de Fichas - Cards Responsivos */}
@@ -132,16 +135,14 @@ export default async function FichaPage({ params }: FichaPageProps) {
                                 <Link
                                     key={tipo}
                                     href={fichaExistente ? `/dashboard/fichas/${fichaExistente.id}` : `#`}
-                                    className={`relative group transition-all duration-200 ${
-                                        !fichaExistente ? 'pointer-events-none opacity-60' : ''
-                                    }`}
+                                    className={`relative group transition-all duration-200 ${!fichaExistente ? 'pointer-events-none opacity-60' : ''
+                                        }`}
                                 >
                                     <div
-                                        className={`p-4 rounded-xl border-2 transition-all duration-200 ${
-                                            isActive
-                                                ? `${config.color} border-current shadow-md`
-                                                : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-sm'
-                                        }`}
+                                        className={`p-4 rounded-xl border-2 transition-all duration-200 ${isActive
+                                            ? `${config.color} border-current shadow-md`
+                                            : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                                            }`}
                                     >
                                         <div className="flex items-start justify-between">
                                             <div className={`p-2 rounded-lg ${isActive ? 'bg-white/50' : config.bg}`}>
@@ -240,7 +241,7 @@ export default async function FichaPage({ params }: FichaPageProps) {
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500">Congregação Cristã no Brasil</p>
-                                <h2 className="text-xl font-bold">FICHA DE ACOMPANHAMENTO - GEM</h2>
+                                <h2 className="text-xl font-bold">FICHA DE ACOMPANHAMENTO - GGEM</h2>
                                 <p className="text-sm font-medium text-gray-600">{currentConfig?.label}</p>
                             </div>
                         </div>

@@ -10,7 +10,7 @@ export default function Home() {
                         <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center border border-white/20">
                             <span className="text-2xl font-bold text-white">♪</span>
                         </div>
-                        <span className="text-xl font-semibold text-white">GEM</span>
+                        <span className="text-xl font-semibold text-white">GGEM</span>
                     </div>
                     <Link
                         href="/login"
@@ -25,7 +25,7 @@ export default function Home() {
             <main className="container mx-auto px-4 py-16">
                 <div className="max-w-4xl mx-auto text-center">
                     <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-                        Gestão de Ensino
+                        Gestão de Grupo de Ensino
                         <span className="block bg-gradient-to-r from-blue-300 to-indigo-300 bg-clip-text text-transparent">
                             Musical
                         </span>
@@ -83,7 +83,7 @@ export default function Home() {
             {/* Footer */}
             <footer className="container mx-auto px-4 py-8 mt-16 border-t border-white/10">
                 <div className="text-center text-blue-200/60 text-sm">
-                    <p>Sistema GEM - Gestão de Ensino Musical</p>
+                    <p>Sistema GGEM - Gestão de Grupo de Ensino Musical</p>
                     <p className="mt-1">Congregação Cristã no Brasil</p>
                 </div>
             </footer>
