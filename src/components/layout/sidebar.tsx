@@ -95,7 +95,8 @@ export function Sidebar({ className }: SidebarProps) {
                                 {session?.user?.name || "Usuário"}
                             </p>
                             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                {session?.user?.role === "ADMIN" ? "Administrador" : "Instrutor"}
+                                {session?.user?.role === "ADMIN" ? "Administrador" :
+                                    session?.user?.role === "ENCARREGADO" ? "Encarregado" : "Instrutor"}
                             </p>
                         </div>
                         <ModeToggle />

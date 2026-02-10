@@ -331,10 +331,10 @@ export default function RegisterPage() {
                                                 htmlFor="encarregado"
                                                 className="font-medium cursor-pointer text-gray-900 dark:text-gray-100"
                                             >
-                                                Sou o Encarregado de Orquestra desta congregação
+                                                Sou Encarregado / Administrador
                                             </Label>
                                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                Marque esta opção se você é responsável pela orquestra. Você terá acesso administrativo completo.
+                                                Marque esta opção se você é o Encarregado ou um dos Instrutores auxiliares com função administrativa.
                                             </p>
                                         </div>
                                     </div>

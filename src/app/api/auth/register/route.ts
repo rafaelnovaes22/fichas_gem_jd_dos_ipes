@@ -56,19 +56,20 @@ export async function POST(request: NextRequest) {
 
         // Se estiver tentando se registrar como ENCARREGADO, verificar se já existe um
         if (role === "ENCARREGADO") {
-            const encarregadoExistente = await prisma.usuario.findFirst({
+            const encarregadoCount = await prisma.instrutor.count({
                 where: {
-                    role: "ENCARREGADO",
-                    ativo: true,
-                    instrutor: {
-                        congregacao: congregacao
-                    }
-                },
+                    usuario: {
+                        role: "ENCARREGADO",
+                        ativo: true,
+                    },
+                    congregacao: congregacao
+                }
             });
 
-            if (encarregadoExistente) {
+            // Limite de 4 (1 titular + 3 auxiliares)
+            if (encarregadoCount >= 4) {
                 return NextResponse.json(
-                    { error: `Já existe um Encarregado de Orquestra cadastrado para a congregação ${congregacao}` },
+                    { error: `Limite de Encarregados/Administradores (4) atingido para a congregação ${congregacao}` },
                     { status: 400 }
                 );
             }

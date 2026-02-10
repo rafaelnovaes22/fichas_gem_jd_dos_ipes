@@ -7,16 +7,18 @@ import { prisma } from "@/lib/prisma";
  */
 export async function GET() {
     try {
-        const encarregado = await prisma.usuario.findFirst({
+        const encarregadoCount = await prisma.usuario.count({
             where: {
                 role: "ENCARREGADO",
                 ativo: true,
             },
-            select: { id: true },
         });
 
+        // Permitir até 4 Encarregados/Admins (1 titular + 3 auxiliares)
         return NextResponse.json({
-            exists: !!encarregado,
+            exists: encarregadoCount >= 4,
+            count: encarregadoCount,
+            limit: 4
         });
     } catch (error) {
         console.error("Erro ao verificar encarregado:", error);
