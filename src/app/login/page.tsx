@@ -92,7 +92,7 @@ export default function LoginPage() {
                                     id="senha"
                                     placeholder="••••••••"
                                     value={senha}
-                                    onChange={(e) => setSenha(e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSenha(e.target.value)}
                                     required
                                     disabled={loading}
                                 />
