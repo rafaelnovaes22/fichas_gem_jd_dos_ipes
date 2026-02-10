@@ -10,7 +10,7 @@ const registerSchema = z.object({
     senha: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
     congregacao: z.string().min(1, "Congregação é obrigatória"),
     instrumentos: z.array(z.string()).min(1, "Selecione pelo menos um instrumento"),
-    role: z.enum(["INSTRUTOR", "ENCARREGADO"]).optional().default("INSTRUTOR"),
+    role: z.enum(["INSTRUTOR", "ENCARREGADO", "ADMIN"]).optional().default("INSTRUTOR"),
     inviteCode: z.string().optional(),
 });
 
@@ -30,35 +30,43 @@ export async function POST(request: NextRequest) {
 
         // Configurações de Ambiente
         const registrationOpen = process.env.REGISTRATION_OPEN === "true";
+        const encarregadoCode = process.env.ENCARREGADO_INVITE_CODE;
         const adminCode = process.env.ADMIN_INVITE_CODE;
         const instructorCode = process.env.INSTRUCTOR_INVITE_CODE;
 
         // Validação de Permissões baseada no Código de Convite
         if (inviteCode) {
-            if (inviteCode === adminCode) {
-                // Código de Admin: Permite criar tanto ENCARREGADO quanto INSTRUTOR
-                // (Sem restrições adicionais)
+            if (inviteCode === encarregadoCode) {
+                // Código de Encarregado: Permite apenas ENCARREGADO
+                if (role !== "ENCARREGADO") {
+                    // Se o frontend mandar outra role, forçamos erro ou aceitamos?
+                    // Vamos aceitar somente ENCARREGADO para este código.
+                    // Mas se o usuário quiser ser instrutor com código de encarregado?
+                    // Pela regra de negócio estrita solicitada: Código específico para cada função.
+                    if (role === "INSTRUTOR" || role === "ADMIN") {
+                        return NextResponse.json({ error: "Este código é exclusivo para Encarregados." }, { status: 403 });
+                    }
+                }
+            } else if (inviteCode === adminCode) {
+                // Código de Admin: Permite apenas ADMIN
+                if (role !== "ADMIN") {
+                    return NextResponse.json({ error: "Este código é exclusivo para Administradores/Secretários." }, { status: 403 });
+                }
             } else if (inviteCode === instructorCode) {
-                // Código de Instrutor: Permite apenas criar INSTRUTOR
-                if (role === "ENCARREGADO") {
-                    return NextResponse.json(
-                        { error: "Este código de convite não permite cadastro como Encarregado." },
-                        { status: 403 }
-                    );
+                // Código de Instrutor: Permite apenas INSTRUTOR
+                if (role !== "INSTRUTOR") {
+                    return NextResponse.json({ error: "Este código é exclusivo para Instrutores." }, { status: 403 });
                 }
             } else {
-                return NextResponse.json(
-                    { error: "Código de convite inválido." },
-                    { status: 403 }
-                );
+                return NextResponse.json({ error: "Código de convite inválido." }, { status: 403 });
             }
         } else {
             // Sem código de convite
 
-            // ENCARREGADO exige código sempre
-            if (role === "ENCARREGADO") {
+            // Roles privilegiadas exigem código
+            if (role === "ENCARREGADO" || role === "ADMIN") {
                 return NextResponse.json(
-                    { error: "É obrigatório fornecer um código de convite válido para registro como Encarregado." },
+                    { error: "É obrigatório fornecer um código de convite válido para registro como Encarregado ou Admin." },
                     { status: 403 }
                 );
             }
@@ -99,22 +107,34 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Se estiver tentando se registrar como ENCARREGADO, verificar se já existe um
+        // Limites de Roles
+
+        // Encarregado (Limite 4)
         if (role === "ENCARREGADO") {
             const encarregadoCount = await prisma.instrutor.count({
                 where: {
-                    usuario: {
-                        role: "ENCARREGADO",
-                        ativo: true,
-                    },
+                    usuario: { role: "ENCARREGADO", ativo: true },
                     congregacao: congregacao
                 }
             });
 
-            // Limite de 4 (1 titular + 3 auxiliares)
             if (encarregadoCount >= 4) {
                 return NextResponse.json(
-                    { error: `Limite de Encarregados/Administradores (4) atingido para a congregação ${congregacao}` },
+                    { error: `Limite de Encarregados (4) atingido para a congregação ${congregacao}` },
+                    { status: 400 }
+                );
+            }
+        }
+
+        // Admin (Limite 3)
+        if (role === "ADMIN") {
+            const adminCount = await prisma.usuario.count({
+                where: { role: "ADMIN", ativo: true }
+            });
+
+            if (adminCount >= 3) {
+                return NextResponse.json(
+                    { error: "Limite de Administradores/Secretários (3) atingido." },
                     { status: 400 }
                 );
             }

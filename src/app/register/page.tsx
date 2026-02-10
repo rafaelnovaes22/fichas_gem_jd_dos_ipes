@@ -74,11 +74,7 @@ export default function RegisterPage() {
 
                         if (data.valid) {
                             setInviteRole(data.role);
-                            if (data.role === "ENCARREGADO") {
-                                setIsEncarregado(true);
-                            } else {
-                                setIsEncarregado(false);
-                            }
+                            // setIsEncarregado removido - a role é definida pelo convite
                         }
                     } else {
                         setError("Código de convite inválido ou expirado.");
@@ -153,7 +149,7 @@ export default function RegisterPage() {
                     senha: formData.senha,
                     congregacao: CONGREGACAO_FIXA,
                     instrumentos: instrumentosSelecionados,
-                    role: isEncarregado ? "ENCARREGADO" : "INSTRUTOR",
+                    role: inviteRole || "INSTRUTOR",
                     inviteCode: inviteCode || undefined,
                 }),
             });
@@ -359,43 +355,17 @@ export default function RegisterPage() {
                                 </div>
                             )}
 
-                            {/* Só mostra formulário se estiver aberto ou tiver convite válido (que abre o registro) */}
-                            {(registrationOpen || (inviteCode && isEncarregado)) && (
-                                <>
-                                    {/* ... campos do formulário ... */}
-                                </>
+
+                            {/* Indicador de Role (se tiver convite ou se tiver fallback) */}
+                            {inviteCode && inviteRole && (
+                                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded-lg border border-blue-200 dark:border-blue-800 text-center">
+                                    <p className="font-medium">
+                                        Cadastrando como: <span className="font-bold">{inviteRole}</span>
+                                    </p>
+                                </div>
                             )}
 
-                            {/* Opção de Encarregado - Só exibe se NÃO estiver usando código de INSTRUTOR */
-                                /* Lógica: Se tem inviteCode, só mostra se inviteRole for ENCARREGADO. Se não tem invite, mostra se registro aberto. */
-                            }
 
-                            {!encarregadoExists && !checkingEncarregado && (
-                                (inviteCode && inviteRole === "ENCARREGADO") ||
-                                (!inviteCode && registrationOpen)
-                            ) && (
-                                    <div className="space-y-3 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                                        <div className="flex items-start space-x-3">
-                                            <Checkbox
-                                                id="encarregado"
-                                                checked={isEncarregado}
-                                                onCheckedChange={(checked) => setIsEncarregado(checked === true)}
-                                                disabled={loading}
-                                            />
-                                            <div className="space-y-1">
-                                                <Label
-                                                    htmlFor="encarregado"
-                                                    className="font-medium cursor-pointer text-gray-900 dark:text-gray-100"
-                                                >
-                                                    Sou Encarregado / Administrador
-                                                </Label>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    Marque esta opção se você é o Encarregado ou um dos Instrutores auxiliares com função administrativa.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
 
                             <div className="space-y-3">
                                 <Label>Instrumentos que leciona *</Label>

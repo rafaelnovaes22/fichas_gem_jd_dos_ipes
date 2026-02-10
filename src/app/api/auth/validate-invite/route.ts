@@ -8,11 +8,14 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ valid: false }, { status: 400 });
     }
 
+    const encarregadoCode = process.env.ENCARREGADO_INVITE_CODE;
     const adminCode = process.env.ADMIN_INVITE_CODE;
     const instructorCode = process.env.INSTRUCTOR_INVITE_CODE;
 
-    if (code === adminCode) {
+    if (code === encarregadoCode) {
         return NextResponse.json({ valid: true, role: "ENCARREGADO" });
+    } else if (code === adminCode) {
+        return NextResponse.json({ valid: true, role: "ADMIN" });
     } else if (code === instructorCode) {
         return NextResponse.json({ valid: true, role: "INSTRUTOR" });
     } else {
